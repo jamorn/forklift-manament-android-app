@@ -21,13 +21,32 @@ android {
         vectorDrawables { useSupportLibrary = true }
 
         buildConfigField("boolean", "USE_MOCK", "true")
+
+        // จำกัด specific architecture เพื่อลดขนาด APK และ compatibility
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
     }
 
     buildTypes {
+        debug {
+            // แก้ 16KB alignment warning สำหรับ ML Kit native libs
+            isMinifyEnabled = false
+            packaging {
+                jniLibs {
+                    useLegacyPackaging = true
+                }
+            }
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("boolean", "USE_MOCK", "false")
+            packaging {
+                jniLibs {
+                    useLegacyPackaging = true
+                }
+            }
         }
     }
 
@@ -70,6 +89,17 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("org.json:json:20231013")
+
+    // Permission helper
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+
+    // ML Kit Barcode Scanning
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

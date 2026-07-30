@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.core.domain.repository.AuthRepository
 import com.irpc.forklift.core.domain.usecase.checklist.GetPreviousChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.checklist.SubmitChecksheetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ import javax.inject.Inject
 class ChecklistViewModel @Inject constructor(
     private val getPreviousChecksheet: GetPreviousChecksheetUseCase,
     private val submitChecksheet: SubmitChecksheetUseCase,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChecklistUiState())
@@ -41,6 +43,13 @@ class ChecklistViewModel @Inject constructor(
 
     init {
         loadVehicles()
+        // โหลด current user email
+        viewModelScope.launch {
+            val profile = authRepository.getCurrentProfile()
+            _uiState.value = _uiState.value.copy(
+                currentUser = profile?.displayName ?: profile?.email ?: "unknown",
+            )
+        }
     }
 
     private fun loadVehicles() {

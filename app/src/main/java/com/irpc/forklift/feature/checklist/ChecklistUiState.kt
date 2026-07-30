@@ -11,6 +11,7 @@ data class ChecklistUiState(
     val step: Int = 1,                           // 1=เลือก, 2=ตรวจ, 3=สำเร็จ
     val vehicles: List<Vehicle> = emptyList(),
     val selectedVehicle: Vehicle? = null,
+    val currentUser: String? = null,             // email ของ user ที่ login
     val checkResults: Map<String, String> = emptyMap(),  // itemId → "pass" | "fail"
     val remarks: Map<String, String> = emptyMap(),       // itemId → ข้อความ (เฉพาะ fail)
     val mainRemark: String = "",                         // หมายเหตุรวม

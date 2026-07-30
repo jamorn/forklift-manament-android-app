@@ -28,6 +28,7 @@ import com.irpc.forklift.ui.components.LoadingSpinner
 @Composable
 fun ChecklistScreen(
     onBack: () -> Unit = {},
+    onChecklistSaved: (chassisNo: String, info: String) -> Unit = { _, _ -> },
     initialVehicle: Vehicle? = null,
     viewModel: ChecklistViewModel = hiltViewModel(),
 ) {
@@ -37,6 +38,19 @@ fun ChecklistScreen(
     LaunchedEffect(initialVehicle) {
         if (initialVehicle != null && uiState.step == 1) {
             viewModel.selectVehicle(initialVehicle)
+        }
+    }
+
+    // เมื่อ step = 3 (บันทึกสำเร็จ) ให้ callback ไปบอก MainActivity
+    LaunchedEffect(uiState.step, uiState.selectedVehicle, uiState.currentUser) {
+        if (uiState.step == 3) {
+            uiState.selectedVehicle?.let { v ->
+                val user = uiState.currentUser ?: "unknown"
+                val time = java.time.LocalTime.now().format(
+                    java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+                )
+                onChecklistSaved(v.chassis_no, "$time น. โดย $user")
+            }
         }
     }
 
