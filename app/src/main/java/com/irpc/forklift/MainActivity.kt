@@ -17,11 +17,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.feature.auth.LoginScreen
+import com.irpc.forklift.feature.checklist.ChecklistScreen as NewChecklistScreen
 import com.irpc.forklift.feature.dashboard.SupervisorDashboardScreen
 import com.irpc.forklift.feature.maintenance.MaintenanceScreen
 import com.irpc.forklift.feature.report.ReportScreen
+import com.irpc.forklift.ui.components.StatusBadge
 import com.irpc.forklift.ui.theme.ForkliftTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,10 +47,13 @@ class MainActivity : ComponentActivity() {
 // ============ ROOT NAV ============
 @Composable
 fun AppRoot() {
-    var screen by remember { mutableStateOf("menu") }
+        var screen by remember { mutableStateOf("login") }
     var selectedV by remember { mutableStateOf<Vehicle?>(null) }
 
     when (screen) {
+        "login" -> LoginScreen(
+            onLoginSuccess = { screen = "menu" }
+        )
         "menu" -> MainMenuScreen(
             onGoChecklist = { screen = "vehicles" },
             onGoDashboard = { screen = "dashboard" },
@@ -56,9 +64,7 @@ fun AppRoot() {
             onVehicleClick = { v -> selectedV = v; screen = "checklist" },
             onBack = { screen = "menu" }
         )
-        "checklist" -> selectedV?.let { v ->
-            ChecklistScreen(v, onBack = { screen = "vehicles" }, onSubmit = { screen = "vehicles" })
-        }
+        "checklist" -> NewChecklistScreen()
         "dashboard" -> SupervisorDashboardScreen(onBack = { screen = "menu" })
         "maintenance" -> MaintenanceScreen(onBack = { screen = "menu" })
         "report" -> ReportScreen(onBack = { screen = "menu" })
@@ -160,86 +166,6 @@ fun VehicleCard(v: Vehicle, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun StatusBadge(status: String) {
-    val (c, t) = when (status) {
-        "active" -> Color(0xFF10B981) to "ปกติ"
-        "maintenance" -> Color(0xFFF59E0B) to "ซ่อมบำรุง"
-        else -> Color(0xFF64748B) to status
-    }
-    Surface(color = c.copy(alpha = 0.15f), shape = MaterialTheme.shapes.small) {
-        Text(t, color = c, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
-    }
-}
-
 // =====================================================================
-// 📋 CHECKLIST
+// 📋 CHECKLIST (OLD — replaced by NewChecklistScreen from feature/checklist)
 // =====================================================================
-data class CheckState(val result: String = "pass", val remark: String = "")
-
-@Composable
-fun ChecklistScreen(v: Vehicle, onBack: () -> Unit, onSubmit: () -> Unit) {
-    val items = remember { mutableStateListOf<Pair<String, CheckState>>().apply { addAll(MockData.checklistItems.map { it.id to CheckState() }) } }
-    var meter by remember { mutableStateOf("") }
-    var remark by remember { mutableStateOf("") }
-
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("📋 ${v.current_flno}") }, navigationIcon = { TextButton(onClick = onBack) { Text("← กลับ") } }) }
-    ) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding).padding(16.dp)) {
-            item {
-                Card(Modifier.fillMaxWidth().padding(bottom = 12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-                    Column(Modifier.padding(12.dp)) {
-                        Text(v.current_flno, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        Text("ทะเบียน: ${v.chassis_no}")
-                        Text("ประเภท: ${v.vehicle_type}")
-                    }
-                }
-            }
-            MockData.categories.forEach { cat ->
-                val catItems = MockData.checklistItems.filter { it.category == cat }
-                item { Text(text = cat, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.titleSmall) }
-                catItems.forEach { ci ->
-                    val idx = items.indexOfFirst { it.first == ci.id }
-                    if (idx >= 0) {
-                        val pair = items[idx]
-                        item { CheckRow(ci.label, pair.second, onResult = { r -> items[idx] = pair.first to pair.second.copy(result = r) }, onRemark = { r -> items[idx] = pair.first to pair.second.copy(remark = r) }) }
-                    }
-                }
-            }
-            item {
-                Spacer(Modifier.height(12.dp))
-                OutlinedTextField(value = meter, onValueChange = { meter = it }, label = { Text("เลขไมล์ (Manhour Meter)") }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = MaterialTheme.shapes.medium)
-            }
-            item {
-                OutlinedTextField(value = remark, onValueChange = { remark = it }, label = { Text("หมายเหตุเพิ่มเติม") }, modifier = Modifier.fillMaxWidth().height(80.dp), shape = MaterialTheme.shapes.medium)
-            }
-            item {
-                Spacer(Modifier.height(16.dp))
-                Button(onClick = onSubmit, modifier = Modifier.fillMaxWidth().height(52.dp), shape = MaterialTheme.shapes.medium) { Text("✅ บันทึกผลตรวจ", fontWeight = FontWeight.Bold, fontSize = 16.sp) }
-                Spacer(Modifier.height(24.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun CheckRow(label: String, s: CheckState, onResult: (String) -> Unit, onRemark: (String) -> Unit) {
-    val fail = s.result == "fail"
-    Surface(Modifier.fillMaxWidth().padding(vertical = 2.dp), color = if (fail) Color(0xFFEF4444).copy(alpha = 0.08f) else Color.Transparent, shape = MaterialTheme.shapes.small) {
-        Column(Modifier.padding(horizontal = 8.dp, vertical = 6.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                Row {
-                    FilterChip(selected = s.result == "pass", onClick = { onResult("pass") }, label = { Text("✓") })
-                    Spacer(Modifier.width(4.dp))
-                    FilterChip(selected = fail, onClick = { onResult("fail") }, label = { Text("✗") })
-                }
-            }
-            if (fail) {
-                Spacer(Modifier.height(4.dp))
-                OutlinedTextField(value = s.remark, onValueChange = onRemark, label = { Text("ระบุปัญหา", fontSize = 12.sp) }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = MaterialTheme.shapes.small, colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFFEF4444), unfocusedBorderColor = Color(0xFFEF4444).copy(alpha = 0.5f)))
-            }
-        }
-    }
-}

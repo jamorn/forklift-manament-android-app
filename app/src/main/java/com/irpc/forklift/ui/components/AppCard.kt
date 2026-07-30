@@ -10,19 +10,23 @@ import androidx.compose.ui.unit.dp
 /**
  * 🃏 App Card — Reusable Card Wrapper
  *
- * @Composable
- * fun AppCard(
- *     modifier: Modifier = Modifier,
- *     content: @Composable ColumnScope.() -> Unit,
- * ) {
- *     Card(
- *         modifier = modifier.fillMaxWidth(),
- *         shape = MaterialTheme.shapes.medium,
- *         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
- *         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
- *     ) { Column(modifier = Modifier.padding(16.dp), content = content) }
- * }
+ * @param modifier Modifier
+ * @param content composable content ใน Column
  */
-object AppCard {
-    // TODO: implement
+@Composable
+fun AppCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp), content = content)
+    }
 }
+

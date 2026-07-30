@@ -11,18 +11,22 @@ import androidx.compose.ui.Modifier
 /**
  * ⏳ Loading Spinner — Full Screen
  *
- * @Composable
- * fun LoadingSpinner(modifier: Modifier = Modifier) {
- *     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
- *         CircularProgressIndicator()
- *     }
- * }
- *
- * @Composable
- * fun SmallSpinner(modifier: Modifier = Modifier) {
- *     CircularProgressIndicator(modifier = modifier)
- * }
+ * แสดง CircularProgressIndicator กึ่งกลางจอ
  */
-object LoadingSpinner {
-    // TODO: implement
+@Composable
+fun LoadingSpinner(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
 }
+
+/**
+ * ⏳ Small Spinner — Inline
+ *
+ * ใช้ในปุ่มหรือพื้นที่เล็ก
+ */
+@Composable
+fun SmallSpinner(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(modifier = modifier)
+}
+

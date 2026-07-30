@@ -8,13 +8,14 @@ import com.irpc.forklift.core.domain.model.ShiftResult
 import com.irpc.forklift.core.domain.model.TeamShiftInfo
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import javax.inject.Inject
 
 /**
  * ⏰ คำนวณ Shift ปัจจุบัน (Cycle 8 วัน)
  *
  * เทียบกับ useGetCurrentShift() ใน shift.ts
  */
-class GetCurrentShiftUseCase {
+class GetCurrentShiftUseCase @Inject constructor() {
 
     operator fun invoke(): ShiftResult {
         val today = LocalDate.now()
