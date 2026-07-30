@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1038910954618",
+    "project_id": "forklift-management-f517c",
+    "storage_bucket": "forklift-management-f517c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038910954618:android:d2121176a175f36c5aefc3",
+        "android_client_info": {
+          "package_name": "com.irpc.forklift"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPB0K8XKjc4q_ESBj-VIPUtDkBndGevKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,40 @@
+// 📁 ui/components/SkeletonLoader.kt
+package com.irpc.forklift.ui.components
+
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.dp
+
+/**
+ * 💀 Skeleton Loader — Placeholder ขณะโหลดข้อมูล
+ *
+ * @Composable
+ * fun SkeletonLoader(
+ *     modifier: Modifier = Modifier,
+ *     height: Int = 16,
+ *     width: Int? = null,  // null = fillMaxWidth
+ * ) {
+ *     val shimmer = rememberInfiniteTransition().animateFloat(
+ *         initialValue = 0f,
+ *         targetValue = 1000f,
+ *         animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Restart),
+ *     )
+ *
+ *     Box(
+ *         modifier = modifier
+ *             .then(if (width != null) Modifier.width(width.dp) else Modifier.fillMaxWidth())
+ *             .height(height.dp)
+ *             .clip(MaterialTheme.shapes.small)
+ *             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+ *     )
+ * }
+ */
+object SkeletonLoader {
+    // TODO: implement
+}

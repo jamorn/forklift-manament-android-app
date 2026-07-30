@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- ตัวรถ สีน้ำเงิน -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M6,28 L6,36 L28,36 L28,28 Z" />
+    <!-- ห้องคนขับ -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M28,22 L28,36 L40,36 L40,22 Z" />
+    <!-- หลังคา -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M26,22 L26,18 L42,18 L42,22 Z" />
+    <!-- กระจก -->
+    <path
+        android:fillColor="#93C5FD"
+        android:pathData="M30,23 L30,34 L38,34 L38,23 Z" />
+    <!-- ล้อหลัง -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M14,36 A5,5 0 1,0 14,46 A5,5 0 1,0 14,36 Z" />
+    <!-- ล้อหน้า -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M34,36 A5,5 0 1,0 34,46 A5,5 0 1,0 34,36 Z" />
+    <!-- ส้อม/งา -->
+    <path
+        android:fillColor="#666666"
+        android:pathData="M4,28 L4,18 L9,18 L9,28 Z" />
+    <path
+        android:fillColor="#666666"
+        android:pathData="M12,28 L12,18 L17,18 L17,28 Z" />
+
+</vector>

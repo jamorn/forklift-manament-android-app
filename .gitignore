@@ -1,0 +1,17 @@
+# Forklift Management Android
+/build
+/.gradle
+/app/build
+/local.properties
+*.iml
+.gradle/
+.idea/
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+local.properties
