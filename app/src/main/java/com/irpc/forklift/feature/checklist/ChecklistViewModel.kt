@@ -19,10 +19,14 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 /**
- * 📋 Checklist ViewModel
+ * Checklist ViewModel
  *
  * - selectVehicle: เลือกรถ + โหลด checksheet ก่อนหน้า (Copy-Forward)
  * - checkItem: บันทึกผลตรวจแต่ละรายการ
+ * - remarkItem: บันทึกหมายเหตุแต่ละรายการ
+ * - setMainRemark: บันทึกหมายเหตุรวม
+ * - setManhourMeter: บันทึกเลขไมล์
+ * - passAllItems: ตั้งค่าทุก item เป็น pass
  * - submitChecksheet: ส่งบันทึก
  * - reset: กลับไปเริ่มใหม่
  */
@@ -54,21 +58,38 @@ class ChecklistViewModel @Inject constructor(
 
         viewModelScope.launch {
             val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
-            // Default to morning shift for now; real app would use GetCurrentShiftUseCase
             val result = getPreviousChecksheet(
                 chassisNo = vehicle.chassis_no,
                 currentDate = today,
                 currentShift = "M",
             )
             result.onSuccess { cs ->
-                _uiState.value = _uiState.value.copy(
-                    previousChecksheet = cs,
-                    isCopyForward = cs != null,
-                    isLoading = false,
-                )
+                if (cs != null) {
+                    // Copy-Forward: pre-fill results + remarks + meter จากกะก่อน
+                    _uiState.value = _uiState.value.copy(
+                        previousChecksheet = cs,
+                        isCopyForward = true,
+                        checkResults = cs.results,
+                        remarks = cs.remarks,
+                        mainRemark = cs.main_remark,
+                        manhourMeter = cs.manhourMeter,
+                        isLoading = false,
+                    )
+                } else {
+                    // ไม่มีกะก่อน → default PASS all
+                    val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
+                    _uiState.value = _uiState.value.copy(
+                        previousChecksheet = null,
+                        isCopyForward = false,
+                        checkResults = defaultResults,
+                        isLoading = false,
+                    )
+                }
             }.onFailure { e ->
+                val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
                 _uiState.value = _uiState.value.copy(
                     error = e.message,
+                    checkResults = defaultResults,
                     isLoading = false,
                 )
             }
@@ -81,6 +102,32 @@ class ChecklistViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(checkResults = current)
     }
 
+    fun remarkItem(itemId: String, remark: String) {
+        val current = _uiState.value.remarks.toMutableMap()
+        if (remark.isBlank()) {
+            current.remove(itemId)
+        } else {
+            current[itemId] = remark
+        }
+        _uiState.value = _uiState.value.copy(remarks = current)
+    }
+
+    fun setMainRemark(remark: String) {
+        _uiState.value = _uiState.value.copy(mainRemark = remark)
+    }
+
+    fun setManhourMeter(value: String) {
+        _uiState.value = _uiState.value.copy(manhourMeter = value)
+    }
+
+    fun passAllItems() {
+        val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
+        _uiState.value = _uiState.value.copy(
+            checkResults = defaultResults,
+            remarks = emptyMap(),
+        )
+    }
+
     fun submitChecksheet() {
         val state = _uiState.value
         val vehicle = state.selectedVehicle ?: return
@@ -91,15 +138,15 @@ class ChecklistViewModel @Inject constructor(
             val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
             val checksheet = DailyChecksheet(
                 date = today,
-                shift = "M", // TODO: use GetCurrentShiftUseCase
+                shift = "M",
                 shift_order = 1,
                 chassis_no = vehicle.chassis_no,
                 flno_at_time = vehicle.current_flno,
                 operator_uid = "",
                 results = state.checkResults,
-                remarks = emptyMap(),
-                main_remark = "",
-                manhourMeter = "",
+                remarks = state.remarks,
+                main_remark = state.mainRemark,
+                manhourMeter = state.manhourMeter,
                 status = if (state.checkResults.any { it.value == "fail" }) "unsafe" else "normal",
                 created_at = "",
             )

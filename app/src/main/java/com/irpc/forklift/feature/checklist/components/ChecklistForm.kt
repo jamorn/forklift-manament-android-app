@@ -1,4 +1,3 @@
-// 📁 feature/checklist/components/ChecklistForm.kt
 package com.irpc.forklift.feature.checklist.components
 
 import androidx.compose.foundation.layout.*
@@ -15,27 +14,21 @@ import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.feature.checklist.components.CategorySection.CategorySection
 import com.irpc.forklift.feature.checklist.components.ManhourMeterInput.ManhourMeterInput
 
-/**
- * 📋 Step 2: Checklist Form
- *
- * แสดง Category Sections + Check Items
- * พร้อม Copy-Forward Banner ถ้ามี checksheet ก่อนหน้า
- *
- * @param vehicle รถที่กำลังตรวจ
- * @param previousChecksheet checksheet ก่อนหน้า (สำหรับ Copy-Forward)
- * @param onItemChecked callback (itemId, result)
- * @param onSubmit callback ส่งข้อมูล
- */
 @Composable
 fun ChecklistForm(
     vehicle: Vehicle,
     previousChecksheet: DailyChecksheet?,
+    results: Map<String, String>,
+    remarks: Map<String, String>,
+    mainRemark: String,
+    manhourMeter: String,
     onItemChecked: (String, String) -> Unit,
+    onItemRemark: (String, String) -> Unit,
+    onMainRemarkChange: (String) -> Unit,
+    onManhourMeterChange: (String) -> Unit,
+    onPassAll: () -> Unit,
     onSubmit: () -> Unit,
 ) {
-    var manhourMeter by remember { mutableStateOf("") }
-    var mainRemark by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,25 +44,16 @@ fun ChecklistForm(
             Spacer(Modifier.height(12.dp))
         }
 
-        // Vehicle Info Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
+        // PASS All Button
+        OutlinedButton(
+            onClick = onPassAll,
+            modifier = Modifier.fillMaxWidth().height(44.dp),
+            shape = MaterialTheme.shapes.medium,
         ) {
-            Column(Modifier.padding(12.dp)) {
-                Text(
-                    vehicle.current_flno,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text("ทะเบียน: ${vehicle.chassis_no}")
-                Text("ประเภท: ${vehicle.vehicle_type}")
-            }
+            Text("✅ PASS All — ตั้งค่าทุกข้อเป็นปกติ", fontWeight = FontWeight.Bold)
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
 
         // Category Sections
         MockData.categories.forEach { category ->
@@ -78,8 +62,10 @@ fun ChecklistForm(
                 CategorySection(
                     title = category,
                     items = catItems,
-                    results = emptyMap(), // TODO: connect to actual state
+                    results = results,
+                    remarks = remarks,
                     onItemChecked = onItemChecked,
+                    onItemRemark = onItemRemark,
                 )
                 Spacer(Modifier.height(8.dp))
             }
@@ -88,7 +74,7 @@ fun ChecklistForm(
         // Manhour Meter
         ManhourMeterInput(
             value = manhourMeter,
-            onValueChange = { manhourMeter = it },
+            onValueChange = onManhourMeterChange,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -96,8 +82,8 @@ fun ChecklistForm(
         // Main Remark
         OutlinedTextField(
             value = mainRemark,
-            onValueChange = { mainRemark = it },
-            label = { Text("หมายเหตุเพิ่มเติม") },
+            onValueChange = onMainRemarkChange,
+            label = { Text("หมายเหตุเพิ่มเติม (แจ้งกะถัดไป)") },
             modifier = Modifier.fillMaxWidth().height(80.dp),
             shape = MaterialTheme.shapes.medium,
         )

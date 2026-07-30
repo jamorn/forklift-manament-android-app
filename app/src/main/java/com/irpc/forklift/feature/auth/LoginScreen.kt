@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.feature.auth.components.MockUserSelector
 
 /**
@@ -21,15 +22,16 @@ import com.irpc.forklift.feature.auth.components.MockUserSelector
  */
 @Composable
 fun LoginScreen(
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (UserProfile) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     // Auto-navigate when login succeeds
     LaunchedEffect(uiState.isLoggedIn) {
-        if (uiState.isLoggedIn) {
-            onLoginSuccess()
+        val profile = uiState.profile
+        if (uiState.isLoggedIn && profile != null) {
+            onLoginSuccess(profile)
         }
     }
 

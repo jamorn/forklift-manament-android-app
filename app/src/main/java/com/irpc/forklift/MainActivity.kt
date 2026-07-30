@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.feature.auth.LoginScreen
 import com.irpc.forklift.feature.checklist.ChecklistScreen as NewChecklistScreen
@@ -48,11 +49,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRoot() {
         var screen by remember { mutableStateOf("login") }
+    var profile by remember { mutableStateOf<UserProfile?>(null) }
     var selectedV by remember { mutableStateOf<Vehicle?>(null) }
+
+    val isOperator: Boolean = profile?.roles?.role == "operator"
+    val canAccessMenu: Boolean = profile?.roles?.role in listOf("sa", "admin", "super")
 
     when (screen) {
         "login" -> LoginScreen(
-            onLoginSuccess = { screen = "menu" }
+            onLoginSuccess = { p ->
+                profile = p
+                // operator ข้าม menu ไป checklist เลย
+                screen = if (p.roles.role == "operator") "vehicles" else "menu"
+            }
         )
         "menu" -> MainMenuScreen(
             onGoChecklist = { screen = "vehicles" },
@@ -62,9 +71,15 @@ fun AppRoot() {
         )
         "vehicles" -> VehicleListScreen(
             onVehicleClick = { v -> selectedV = v; screen = "checklist" },
-            onBack = { screen = "menu" }
+            onBack = {
+                // operator กลับไป login; admin/sa กลับ menu
+                screen = if (isOperator) "login" else "menu"
+            }
         )
-        "checklist" -> NewChecklistScreen()
+        "checklist" -> NewChecklistScreen(
+            initialVehicle = selectedV,
+            onBack = { screen = "vehicles" }
+        )
         "dashboard" -> SupervisorDashboardScreen(onBack = { screen = "menu" })
         "maintenance" -> MaintenanceScreen(onBack = { screen = "menu" })
         "report" -> ReportScreen(onBack = { screen = "menu" })

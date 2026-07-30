@@ -26,7 +26,9 @@ fun CategorySection(
     title: String,
     items: List<ChecklistItem>,
     results: Map<String, String>,
+    remarks: Map<String, String>,
     onItemChecked: (String, String) -> Unit,
+    onItemRemark: (String, String) -> Unit,
 ) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(
@@ -39,7 +41,9 @@ fun CategorySection(
             CheckItemRow(
                 item = item,
                 result = results[item.id],
+                remark = remarks[item.id] ?: "",
                 onChecked = { result -> onItemChecked(item.id, result) },
+                onRemark = { remark -> onItemRemark(item.id, remark) },
             )
         }
     }
