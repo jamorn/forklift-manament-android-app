@@ -10,7 +10,7 @@
     <string name="label_vehicle_select">เลือกรถโฟร์คลิฟท์</string>
     <string name="label_shift_morning">กะเช้า</string>
     <string name="label_shift_evening">กะบ่าย</string>
-    <string name="label_shift_night">กะกลางคืน</string>
+    <string name="label_shift_night">กะดึก</string>
     <string name="label_missing_vehicle">รถที่ยังไม่ตรวจ</string>
     <string name="label_offline_mode">คุณกำลังทำงานในโหมด Offline</string>
     <string name="label_copy_forward" formatted="false">อ้างอิงจากกะ %s วันที่ %s</string>
