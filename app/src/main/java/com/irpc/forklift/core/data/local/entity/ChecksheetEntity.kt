@@ -24,18 +24,19 @@ data class ChecksheetEntity(
     val synced: Boolean = false,
 )
 
-fun ChecksheetEntity.toDomain(): DailyChecksheet = DailyChecksheet(
-    id = id.toString(),
-    date = date,
-    shift = shift,
-    shift_order = 0,
-    chassis_no = chassis_no,
-    flno_at_time = flno_at_time,
-    operator_uid = operator_uid,
-    results = emptyMap(),
-    remarks = emptyMap(),
-    main_remark = main_remark,
-    manhourMeter = manhourMeter,
-    status = status,
-    created_at = created_at,
-)
+fun ChecksheetEntity.toDomain(): DailyChecksheet =
+    DailyChecksheet(
+        id = id.toString(),
+        date = date,
+        shift = shift,
+        shift_order = 0,
+        chassis_no = chassis_no,
+        flno_at_time = flno_at_time,
+        operator_uid = operator_uid,
+        results = emptyMap(),
+        remarks = emptyMap(),
+        main_remark = main_remark,
+        manhourMeter = manhourMeter,
+        status = status,
+        created_at = created_at,
+    )

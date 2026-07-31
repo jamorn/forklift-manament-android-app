@@ -41,4 +41,3 @@ fun OfflineIndicator(isOffline: Boolean) {
         }
     }
 }
-

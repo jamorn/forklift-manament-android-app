@@ -17,11 +17,9 @@ import com.irpc.forklift.core.domain.model.Vehicle
  * @param vehicles รายการรถที่ค้างตรวจ
  */
 @Composable
-fun MissingVehicleTable(
-    vehicles: List<Vehicle>,
-) {
+fun MissingVehicleTable(vehicles: List<Vehicle>) {
     LazyColumn(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(horizontal = 16.dp),
     ) {
         items(vehicles) { vehicle ->
             VehicleRow(
@@ -31,4 +29,3 @@ fun MissingVehicleTable(
         }
     }
 }
-

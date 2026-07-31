@@ -18,8 +18,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.irpc.forklift.core.data.mock.MockData.ChecklistItem
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun CheckItemRow(
     item: ChecklistItem,
@@ -41,15 +38,18 @@ fun CheckItemRow(
     val isFail = result == "fail"
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp)
-            .background(
-                if (isFail) Color(0xFFEF4444).copy(alpha = 0.08f)
-                else Color.Transparent,
-                shape = MaterialTheme.shapes.small,
-            )
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp)
+                .background(
+                    if (isFail) {
+                        Color(0xFFEF4444).copy(alpha = 0.08f)
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = MaterialTheme.shapes.small,
+                ).padding(horizontal = 8.dp, vertical = 6.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -65,20 +65,22 @@ fun CheckItemRow(
                     selected = result == "pass",
                     onClick = { onChecked("pass") },
                     label = { Text("✓") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFF16A34A),
-                        selectedLabelColor = Color.White,
-                    ),
+                    colors =
+                        FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF16A34A),
+                            selectedLabelColor = Color.White,
+                        ),
                 )
                 Spacer(Modifier.width(4.dp))
                 FilterChip(
                     selected = isFail,
                     onClick = { onChecked("fail") },
                     label = { Text("✗") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Color(0xFFDC2626),
-                        selectedLabelColor = Color.White,
-                    ),
+                    colors =
+                        FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFFDC2626),
+                            selectedLabelColor = Color.White,
+                        ),
                 )
             }
         }
@@ -91,12 +93,12 @@ fun CheckItemRow(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = MaterialTheme.shapes.small,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFFEF4444),
-                    unfocusedBorderColor = Color(0xFFEF4444).copy(alpha = 0.5f),
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFFEF4444),
+                        unfocusedBorderColor = Color(0xFFEF4444).copy(alpha = 0.5f),
+                    ),
             )
         }
     }
 }
-

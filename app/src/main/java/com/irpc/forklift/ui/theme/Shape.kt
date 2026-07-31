@@ -10,9 +10,10 @@ import androidx.compose.ui.unit.dp
  *
  * ใช้ rounded corners แบบเดียวกับเว็บ (rounded-xl = 12dp)
  */
-val ForkliftShapes = Shapes(
-    small = RoundedCornerShape(8.dp),      // rounded-lg
-    medium = RoundedCornerShape(12.dp),    // rounded-xl
-    large = RoundedCornerShape(16.dp),     // rounded-2xl
-    extraLarge = RoundedCornerShape(24.dp),// rounded-3xl
-)
+val ForkliftShapes =
+    Shapes(
+        small = RoundedCornerShape(8.dp), // rounded-lg
+        medium = RoundedCornerShape(12.dp), // rounded-xl
+        large = RoundedCornerShape(16.dp), // rounded-2xl
+        extraLarge = RoundedCornerShape(24.dp), // rounded-3xl
+    )

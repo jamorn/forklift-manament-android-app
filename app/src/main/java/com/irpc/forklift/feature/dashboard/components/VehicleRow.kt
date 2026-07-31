@@ -27,9 +27,10 @@ fun VehicleRow(
         shape = MaterialTheme.shapes.medium,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -53,4 +54,3 @@ fun VehicleRow(
         }
     }
 }
-

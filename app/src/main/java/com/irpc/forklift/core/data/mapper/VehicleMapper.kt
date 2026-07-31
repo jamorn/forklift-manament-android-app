@@ -8,8 +8,8 @@ import com.irpc.forklift.core.domain.model.Vehicle
  * 🚛 Vehicle Mapper — Entity ↔ Domain
  */
 object VehicleMapper {
-    fun entityToDomain(entity: VehicleEntity): Vehicle {
-        return Vehicle(
+    fun entityToDomain(entity: VehicleEntity): Vehicle =
+        Vehicle(
             chassis_no = entity.chassis_no,
             current_flno = entity.current_flno,
             department_id = entity.department_id,
@@ -21,10 +21,9 @@ object VehicleMapper {
             rental_price = entity.rental_price,
             flno_history = emptyList(), // TODO: parse from JSON
         )
-    }
 
-    fun domainToEntity(domain: Vehicle): VehicleEntity {
-        return VehicleEntity(
+    fun domainToEntity(domain: Vehicle): VehicleEntity =
+        VehicleEntity(
             chassis_no = domain.chassis_no,
             current_flno = domain.current_flno,
             department_id = domain.department_id,
@@ -36,5 +35,4 @@ object VehicleMapper {
             rental_price = domain.rental_price,
             flno_history_json = "", // TODO: serialize to JSON
         )
-    }
 }

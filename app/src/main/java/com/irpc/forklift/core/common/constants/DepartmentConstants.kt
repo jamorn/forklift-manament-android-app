@@ -16,26 +16,26 @@ object DepartmentConstants {
     const val GROUP_WAREHOUSE = "dept-warehouse"
 
     // Department ID → Display Name (Fallback)
-    val DEPARTMENTS = mapOf(
-        // Bagging
-        "dept-bagging-pp12" to "PP12",
-        "dept-bagging-pp3" to "PP3",
-        "dept-bagging-ppe" to "PPE",
-        "dept-bagging-ppc" to "PPC",
-        "dept-bagging-hd" to "HD",
-        "dept-sealroom" to "Seal Room",
-        "dept-bagging-sasb" to "SASB",
-        // Warehouse
-        "dept-warehouse-wh40" to "WH40",
-        "dept-warehouse-wh41" to "WH41",
-    )
+    val DEPARTMENTS =
+        mapOf(
+            // Bagging
+            "dept-bagging-pp12" to "PP12",
+            "dept-bagging-pp3" to "PP3",
+            "dept-bagging-ppe" to "PPE",
+            "dept-bagging-ppc" to "PPC",
+            "dept-bagging-hd" to "HD",
+            "dept-sealroom" to "Seal Room",
+            "dept-bagging-sasb" to "SASB",
+            // Warehouse
+            "dept-warehouse-wh40" to "WH40",
+            "dept-warehouse-wh41" to "WH41",
+        )
 
     /** departmentId → parent group */
-    fun getParentGroup(deptId: String): String {
-        return when {
+    fun getParentGroup(deptId: String): String =
+        when {
             deptId.startsWith("dept-bagging") -> GROUP_BAGGING
             deptId.startsWith("dept-warehouse") -> GROUP_WAREHOUSE
             else -> deptId
         }
-    }
 }

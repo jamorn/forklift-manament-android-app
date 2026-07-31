@@ -25,4 +25,3 @@ fun ManhourMeterInput(
         modifier = modifier,
     )
 }
-

@@ -5,15 +5,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.ui.components.StatusBadge
-import androidx.compose.material3.ExperimentalMaterial3Api
 
 /**
  * 🚛 Step 1: Vehicle Selector
@@ -28,19 +27,21 @@ fun VehicleSelector(
     vehicles: List<Vehicle>,
     onVehicleSelected: (Vehicle) -> Unit,
 ) {
-    val deptNames = mapOf(
-        "dept-bagging-pp12" to "PP12 Bagging",
-        "dept-bagging-pp3" to "PP3 Bagging",
-        "dept-bagging-ppe" to "PPE Bagging",
-        "dept-bagging-ppc" to "PPC Bagging",
-        "dept-bagging-hd" to "HD Bagging",
-        "dept-sealroom" to "Seal Room",
-    )
+    val deptNames =
+        mapOf(
+            "dept-bagging-pp12" to "PP12 Bagging",
+            "dept-bagging-pp3" to "PP3 Bagging",
+            "dept-bagging-ppe" to "PPE Bagging",
+            "dept-bagging-ppc" to "PPC Bagging",
+            "dept-bagging-hd" to "HD Bagging",
+            "dept-sealroom" to "Seal Room",
+        )
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
     ) {
         item {
             Text(
@@ -57,9 +58,10 @@ fun VehicleSelector(
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = MaterialTheme.shapes.small,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                 ) {
                     Text(
                         text = deptNames[deptId] ?: deptId,
@@ -87,18 +89,21 @@ private fun VehicleCard(
 ) {
     Card(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
@@ -117,4 +122,3 @@ private fun VehicleCard(
         }
     }
 }
-

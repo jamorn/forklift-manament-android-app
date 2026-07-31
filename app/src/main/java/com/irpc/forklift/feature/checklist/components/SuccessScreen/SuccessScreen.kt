@@ -17,13 +17,12 @@ import androidx.compose.ui.unit.sp
  * @param onGoHome callback กลับหน้าแรก
  */
 @Composable
-fun SuccessScreen(
-    onGoHome: () -> Unit,
-) {
+fun SuccessScreen(onGoHome: () -> Unit) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -52,4 +51,3 @@ fun SuccessScreen(
         }
     }
 }
-

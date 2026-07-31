@@ -28,13 +28,14 @@ fun MockUserSelector(
         users.forEach { user ->
             OutlinedButton(
                 onClick = { onUserSelected(user.email) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                 shape = MaterialTheme.shapes.medium,
             ) {
                 Column(
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier.padding(vertical = 4.dp),
                 ) {
                     Text(
                         text = user.displayName,
@@ -55,4 +56,3 @@ fun MockUserSelector(
         }
     }
 }
-

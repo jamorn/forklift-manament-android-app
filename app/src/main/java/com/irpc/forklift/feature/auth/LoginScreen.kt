@@ -37,10 +37,11 @@ fun LoginScreen(
 
     Scaffold { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -68,9 +69,10 @@ fun LoginScreen(
             // Error message
             if (uiState.error != null) {
                 Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    ),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
@@ -105,4 +107,3 @@ fun LoginScreen(
         }
     }
 }
-

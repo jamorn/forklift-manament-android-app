@@ -4,21 +4,33 @@ package com.irpc.forklift.core.common.constants
 /**
  * ⏰ Shift Cycle Constants (8-Day Cycle)
  * เทียบกับ shift.ts ในเว็บ
+ *
+ * กำหนด "ตารางเวร" ของแต่ละทีม
+ * getShift(teamOffset, targetDate) จะคำนวณว่า
+ * แต่ละทีม (A/B/C/D) วันนี้ต้องมากะอะไร (M/E/N) หรือวันหยุด (O)
  */
 object ShiftConstants {
-    // Cycle 8 วัน: day 0-2 = M, day 3-5 = E, day 6-7 = N
+    // Cycle 8 วัน (ลำดับตายตัว): M,M,E,E,N,N,O,O
     const val CYCLE_LENGTH = 8
-    const val MORNING_SHIFT_COUNT = 3   // day 0,1,2
-    const val EVENING_SHIFT_COUNT = 3   // day 3,4,5
-    const val NIGHT_SHIFT_COUNT = 2     // day 6,7
 
-    // Epoch Reference — วันที่เริ่มนับ Cycle แรก
-    const val CYCLE_EPOCH = "2026-07-01"
+    // ลำดับกะในรอบ 8 วัน: index 0 = M, 1 = M, 2 = E, 3 = E, 4 = N, 5 = N, 6 = O, 7 = O
+    val SHIFT_CYCLE = arrayOf("M", "M", "E", "E", "N", "N", "O", "O")
 
-    // Team Colors (สำหรับ UI)
-    val TEAM_COLORS = mapOf(
-        "M" to "#10B981",   // emerald
-        "E" to "#F59E0B",   // amber
-        "N" to "#6366F1",   // indigo
+    // Base Date — เริ่มต้นรอบแรก (ตาม ref: new Date(2026, 0, 1))
+    const val BASE_DATE = "2026-01-01"
+
+    // แต่ละทีมมี offset ต่างกัน → ทำให้ 4 ทีมหมุนเวียนไม่ชนกันในวันเดียวกัน
+    data class Team(
+        val id: String, // "A" | "B" | "C" | "D"
+        val name: String, // "กะ A" | "กะ B" ...
+        val offset: Int, // เอาไปคำนวณ idx = (diffDays + offset) % 8
     )
+
+    val TEAMS =
+        listOf(
+            Team("A", "กะ A", 3),
+            Team("B", "กะ B", 5),
+            Team("C", "กะ C", 7),
+            Team("D", "กะ D", 1),
+        )
 }

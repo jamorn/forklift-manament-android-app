@@ -30,9 +30,10 @@ fun FilterChips(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FilterChip(
@@ -49,4 +50,3 @@ fun FilterChips(
         }
     }
 }
-

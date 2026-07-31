@@ -8,21 +8,22 @@ import androidx.compose.runtime.Composable
 /**
  * 🎨 Forklift Theme — Dark Mode Only (Matches Web UI)
  */
-private val DarkColorScheme = darkColorScheme(
-    primary = ForkliftColors.Accent,
-    onPrimary = ForkliftColors.TextPrimary,
-    primaryContainer = ForkliftColors.AccentBg,
-    secondary = ForkliftColors.AccentLight,
-    background = ForkliftColors.BgPrimary,
-    surface = ForkliftColors.BgCard,
-    surfaceVariant = ForkliftColors.BgSecondary,
-    onBackground = ForkliftColors.TextPrimary,
-    onSurface = ForkliftColors.TextPrimary,
-    onSurfaceVariant = ForkliftColors.TextSecondary,
-    outline = ForkliftColors.Border,
-    error = ForkliftColors.Danger,
-    errorContainer = ForkliftColors.DangerBg,
-)
+private val DarkColorScheme =
+    darkColorScheme(
+        primary = ForkliftColors.Accent,
+        onPrimary = ForkliftColors.TextPrimary,
+        primaryContainer = ForkliftColors.AccentBg,
+        secondary = ForkliftColors.AccentLight,
+        background = ForkliftColors.BgPrimary,
+        surface = ForkliftColors.BgCard,
+        surfaceVariant = ForkliftColors.BgSecondary,
+        onBackground = ForkliftColors.TextPrimary,
+        onSurface = ForkliftColors.TextPrimary,
+        onSurfaceVariant = ForkliftColors.TextSecondary,
+        outline = ForkliftColors.Border,
+        error = ForkliftColors.Danger,
+        errorContainer = ForkliftColors.DangerBg,
+    )
 
 @Composable
 fun ForkliftTheme(content: @Composable () -> Unit) {

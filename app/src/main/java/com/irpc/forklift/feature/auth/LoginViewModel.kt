@@ -19,45 +19,49 @@ import javax.inject.Inject
  * - loginWithGoogle: (placeholder สำหรับ Firebase Auth)
  */
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-) : ViewModel() {
+class LoginViewModel
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+    ) : ViewModel() {
+        private val _uiState =
+            MutableStateFlow(
+                LoginUiState(mockUsers = AuthRepositoryImpl.MOCK_USERS.values.toList()),
+            )
+        val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(
-        LoginUiState(mockUsers = AuthRepositoryImpl.MOCK_USERS.values.toList())
-    )
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
-    fun loginWithGoogle() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            val result = authRepository.signInWithGoogle()
-            result.onSuccess {
-                _uiState.value = _uiState.value.copy(isLoading = false, isLoggedIn = true)
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = it.message)
+        fun loginWithGoogle() {
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(isLoading = true)
+                val result = authRepository.signInWithGoogle()
+                result
+                    .onSuccess {
+                        _uiState.value = _uiState.value.copy(isLoading = false, isLoggedIn = true)
+                    }.onFailure {
+                        _uiState.value = _uiState.value.copy(isLoading = false, error = it.message)
+                    }
             }
         }
-    }
 
-    fun mockLogin(email: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            val result = authRepository.mockLogin(email)
-            result.onSuccess { profile ->
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    isLoggedIn = true,
-                    profile = profile,
-                )
-            }.onFailure { e ->
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+        fun mockLogin(email: String) {
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+                val result = authRepository.mockLogin(email)
+                result
+                    .onSuccess { profile ->
+                        _uiState.value =
+                            _uiState.value.copy(
+                                isLoading = false,
+                                isLoggedIn = true,
+                                profile = profile,
+                            )
+                    }.onFailure { e ->
+                        _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                    }
             }
         }
-    }
 
-    fun clearError() {
-        _uiState.value = _uiState.value.copy(error = null)
+        fun clearError() {
+            _uiState.value = _uiState.value.copy(error = null)
+        }
     }
-}
-

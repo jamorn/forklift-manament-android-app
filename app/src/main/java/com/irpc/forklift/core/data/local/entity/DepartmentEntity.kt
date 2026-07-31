@@ -15,16 +15,18 @@ data class DepartmentEntity(
     val sortOrder: Int,
 )
 
-fun DepartmentEntity.toDomain(): Department = Department(
-    id = id,
-    name = name,
-    parentGroup = parentGroup,
-    sortOrder = sortOrder,
-)
+fun DepartmentEntity.toDomain(): Department =
+    Department(
+        id = id,
+        name = name,
+        parentGroup = parentGroup,
+        sortOrder = sortOrder,
+    )
 
-fun Department.toEntity(): DepartmentEntity = DepartmentEntity(
-    id = id,
-    name = name,
-    parentGroup = parentGroup,
-    sortOrder = sortOrder,
-)
+fun Department.toEntity(): DepartmentEntity =
+    DepartmentEntity(
+        id = id,
+        name = name,
+        parentGroup = parentGroup,
+        sortOrder = sortOrder,
+    )

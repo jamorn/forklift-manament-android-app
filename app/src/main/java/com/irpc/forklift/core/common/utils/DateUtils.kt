@@ -13,6 +13,9 @@ object DateUtils {
     private val dbFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val thaiFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("th", "TH"))
 
+    /** รูปแบบ DB มาตรฐาน (yyyy-MM-dd) — ใช้จัด format ภายนอก */
+    fun getDbFormatter(): DateTimeFormatter = dbFormat
+
     /** today() ในเว็บ */
     fun getTodayString(): String = LocalDate.now().format(dbFormat)
 

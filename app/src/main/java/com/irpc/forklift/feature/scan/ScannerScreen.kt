@@ -5,6 +5,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.border
@@ -29,14 +31,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +42,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
@@ -76,7 +76,7 @@ fun ScannerScreen(
                     }
                 },
             )
-        }
+        },
     ) { padding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -110,16 +110,18 @@ fun ScannerScreen(
                         )
                         Box(modifier = Modifier.fillMaxSize()) {
                             Box(
-                                modifier = Modifier
-                                    .size(250.dp)
-                                    .align(Alignment.Center)
-                                    .border(3.dp, Color(0xFF22C55E), RoundedCornerShape(12.dp)),
+                                modifier =
+                                    Modifier
+                                        .size(250.dp)
+                                        .align(Alignment.Center)
+                                        .border(3.dp, Color(0xFF22C55E), RoundedCornerShape(12.dp)),
                             )
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                                    .padding(32.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(32.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Spacer(Modifier.height(180.dp))
@@ -198,7 +200,6 @@ private fun CameraPreview(
     onCodeScanned: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     AndroidView(
@@ -212,10 +213,25 @@ private fun CameraPreview(
                 @Suppress("DEPRECATION")
                 previewUseCase.setSurfaceProvider(previewView.surfaceProvider)
                 val barcodeScanner = BarcodeScanning.getClient()
-                val imageAnalysis = ImageAnalysis.Builder()
-                    .setTargetResolution(Size(1280, 720))
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
+
+                // ใช้ ResolutionSelector (แทน setTargetResolution ที่ deprecate)
+                // ResolutionStrategy ต้องระบุ Fallback Rule: ถ้ากล้องไม่รองรับ 1280x720
+                val resolutionSelector =
+                    ResolutionSelector
+                        .Builder()
+                        .setResolutionStrategy(
+                            ResolutionStrategy(
+                                Size(1280, 720),
+                                ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER,
+                            ),
+                        ).build()
+
+                val imageAnalysis =
+                    ImageAnalysis
+                        .Builder()
+                        .setResolutionSelector(resolutionSelector)
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
                 imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor()) { imageProxy: ImageProxy ->
                     processImageProxy(imageProxy, barcodeScanner, onCodeScanned)
                 }
@@ -244,7 +260,8 @@ private fun processImageProxy(
     val mediaImage = imageProxy.image
     if (mediaImage != null) {
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-        scanner.process(image)
+        scanner
+            .process(image)
             .addOnSuccessListener { barcodes: List<Barcode> ->
                 for (barcode in barcodes) {
                     val rawValue = barcode.rawValue
@@ -253,8 +270,7 @@ private fun processImageProxy(
                         return@addOnSuccessListener
                     }
                 }
-            }
-            .addOnCompleteListener {
+            }.addOnCompleteListener {
                 imageProxy.close()
             }
     } else {

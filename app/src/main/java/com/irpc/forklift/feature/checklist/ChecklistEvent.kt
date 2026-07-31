@@ -7,12 +7,29 @@ package com.irpc.forklift.feature.checklist
  * ใช้สำหรับส่ง event จาก UI → ViewModel
  */
 sealed class ChecklistEvent {
-    data class SelectVehicle(val chassisNo: String) : ChecklistEvent()
-    data class CheckItem(val itemId: String, val result: String) : ChecklistEvent()
-    data class RemarkItem(val itemId: String, val remark: String) : ChecklistEvent()
-    data class SetManhourMeter(val value: String) : ChecklistEvent()
-    data class SetMainRemark(val value: String) : ChecklistEvent()
+    data class SelectVehicle(
+        val chassisNo: String,
+    ) : ChecklistEvent()
+
+    data class CheckItem(
+        val itemId: String,
+        val result: String,
+    ) : ChecklistEvent()
+
+    data class RemarkItem(
+        val itemId: String,
+        val remark: String,
+    ) : ChecklistEvent()
+
+    data class SetManhourMeter(
+        val value: String,
+    ) : ChecklistEvent()
+
+    data class SetMainRemark(
+        val value: String,
+    ) : ChecklistEvent()
+
     data object Submit : ChecklistEvent()
+
     data object Reset : ChecklistEvent()
 }
-

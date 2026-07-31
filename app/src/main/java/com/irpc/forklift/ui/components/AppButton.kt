@@ -31,15 +31,18 @@ fun AppButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
 ) {
-    val colors = when (variant) {
-        ButtonVariant.Primary -> ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-        )
-        ButtonVariant.Danger -> ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.error,
-        )
-        ButtonVariant.Outline -> ButtonDefaults.outlinedButtonColors()
-    }
+    val colors =
+        when (variant) {
+            ButtonVariant.Primary ->
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                )
+            ButtonVariant.Danger ->
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                )
+            ButtonVariant.Outline -> ButtonDefaults.outlinedButtonColors()
+        }
 
     Button(
         onClick = onClick,
@@ -58,4 +61,3 @@ fun AppButton(
         }
     }
 }
-

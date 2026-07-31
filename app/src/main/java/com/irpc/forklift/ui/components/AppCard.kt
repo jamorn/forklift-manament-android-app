@@ -21,12 +21,12 @@ fun AppCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp), content = content)
     }
 }
-

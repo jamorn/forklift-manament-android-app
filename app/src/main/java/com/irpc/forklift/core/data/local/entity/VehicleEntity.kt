@@ -2,7 +2,6 @@
 package com.irpc.forklift.core.data.local.entity
 
 import com.irpc.forklift.core.domain.model.Vehicle
-import com.irpc.forklift.core.domain.model.FlnoHistoryItem
 
 /**
  * 🚛 Vehicle Room Entity
@@ -22,15 +21,16 @@ data class VehicleEntity(
     val flno_history_json: String = "",
 )
 
-fun VehicleEntity.toDomain(): Vehicle = Vehicle(
-    chassis_no = chassis_no,
-    current_flno = current_flno,
-    department_id = department_id,
-    vehicle_type = vehicle_type,
-    status = status,
-    is_active = is_active,
-    lease_start = lease_start,
-    lease_end = lease_end,
-    rental_price = rental_price,
-    flno_history = emptyList(), // TODO: parse from JSON
-)
+fun VehicleEntity.toDomain(): Vehicle =
+    Vehicle(
+        chassis_no = chassis_no,
+        current_flno = current_flno,
+        department_id = department_id,
+        vehicle_type = vehicle_type,
+        status = status,
+        is_active = is_active,
+        lease_start = lease_start,
+        lease_end = lease_end,
+        rental_price = rental_price,
+        flno_history = emptyList(), // TODO: parse from JSON
+    )

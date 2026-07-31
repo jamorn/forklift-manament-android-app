@@ -29,4 +29,3 @@ fun LoadingSpinner(modifier: Modifier = Modifier) {
 fun SmallSpinner(modifier: Modifier = Modifier) {
     CircularProgressIndicator(modifier = modifier)
 }
-

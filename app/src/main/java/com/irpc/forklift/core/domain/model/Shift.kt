@@ -3,28 +3,37 @@ package com.irpc.forklift.core.domain.model
 
 /**
  * ⏰ Shift Model
- * 
+ *
  * ShiftCode: "M" | "E" | "N"
- * 
- * Shift Cycle (8 วัน):
- *   day 0-2 → M (Morning)
- *   day 3-5 → E (Evening)
- *   day 6-7 → N (Night)
+ *
+ * ⏱️ กะตามช่วงเวลา (ใช้บอก user ว่า "ตอนนี้เป็นเวลากะไหน"):
+ *   M = 06:00 - 14:00 น.  (Morning)
+ *   E = 14:00 - 22:00 น.  (Evening)
+ *   N = 22:00 - 06:00 น.  (Night)
+ *
+ * 📅 "ตารางเวร" (8 วัน loop) — ใช้บอกว่า "ทีมไหนเข้าบรรวันนี้":
+ *   SHIFT_CYCLE = ['M','M','E','E','N','N','O','O']
+ *   idx = (diffDays + teamOffset) % 8 → SHIFT_CYCLE[idx]
  */
-enum class ShiftCode(val label: String, val labelEn: String) {
-    M("เช้า", "Morning"),
-    E("บ่าย", "Evening"),
-    N("กลางคืน", "Night"),
+enum class ShiftCode(
+    val label: String,
+    val labelEn: String,
+    val timeRange: String,
+) {
+    M("เช้า", "Morning", "06:00-14:00 น."),
+    E("บ่าย", "Evening", "14:00-22:00 น."),
+    N("กลางคืน", "Night", "22:00-06:00 น."),
 }
 
-data class ShiftResult(
-    val shift: ShiftCode,
-    val cycleDay: Int,           // 0-7
-    val team: String,            // "A" | "B" | "C" | "D"
+// / กะของทีมหนึ่งๆ ในวันหนึ่ง (shift = null หมายถึง Off/วันหยุด)
+data class TeamShift(
+    val teamId: String, // "A" | "B" | "C" | "D"
+    val teamName: String, // "กะ A" | "กะ B" ...
+    val shift: ShiftCode?, // M | E | N | null (Off)
 )
 
-data class TeamShiftInfo(
-    val team: String,
-    val currentShift: ShiftCode,
-    val todayCycleDay: Int,
+// / ตารางเวรของวันหนึ่ง — รวมทุกทีม (4 ทีม)
+data class TodayShifts(
+    val date: String, // "2026-07-30"
+    val teams: List<TeamShift>, // ทั้ง 4 ทีม + กะวันนี้
 )

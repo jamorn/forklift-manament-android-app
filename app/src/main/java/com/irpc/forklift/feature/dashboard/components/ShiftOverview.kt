@@ -25,22 +25,25 @@ fun ShiftOverview(
     checkedCount: Int,
     totalCount: Int,
 ) {
-    val shiftLabel = when (shift) {
-        ShiftCode.M -> "กะเช้า"
-        ShiftCode.E -> "กะบ่าย"
-        ShiftCode.N -> "กะดึก"
-    }
+    val shiftLabel =
+        when (shift) {
+            ShiftCode.M -> "กะเช้า"
+            ShiftCode.E -> "กะบ่าย"
+            ShiftCode.N -> "กะดึก"
+        }
 
-    val shiftEmoji = when (shift) {
-        ShiftCode.M -> "🌅"
-        ShiftCode.E -> "🌇"
-        ShiftCode.N -> "🌙"
-    }
+    val shiftEmoji =
+        when (shift) {
+            ShiftCode.M -> "🌅"
+            ShiftCode.E -> "🌇"
+            ShiftCode.N -> "🌙"
+        }
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+            ),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -64,4 +67,3 @@ fun ShiftOverview(
         }
     }
 }
-

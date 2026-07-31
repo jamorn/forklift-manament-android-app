@@ -13,24 +13,25 @@ import javax.inject.Inject
  *
  * เทียบกับ lib/copy-forward-utils.ts
  */
-class GetPreviousChecksheetUseCase @Inject constructor(
-    private val checksheetRepository: ChecksheetRepository,
-) {
-    /**
-     * @param chassisNo เลขตัวถังรถ
-     * @param currentDate วันที่ปัจจุบัน
-     * @param currentShift กะปัจจุบัน ("M" | "E" | "N")
-     * @return checksheet ก่อนหน้า หรือ null ถ้าไม่มี
-     */
-    suspend operator fun invoke(
-        chassisNo: String,
-        currentDate: String,
-        currentShift: String,
-    ): Result<DailyChecksheet?> {
-        return checksheetRepository.getPreviousChecksheet(
-            chassisNo = chassisNo,
-            currentDate = currentDate,
-            currentShift = currentShift,
-        )
+class GetPreviousChecksheetUseCase
+    @Inject
+    constructor(
+        private val checksheetRepository: ChecksheetRepository,
+    ) {
+        /**
+         * @param chassisNo เลขตัวถังรถ
+         * @param currentDate วันที่ปัจจุบัน
+         * @param currentShift กะปัจจุบัน ("M" | "E" | "N")
+         * @return checksheet ก่อนหน้า หรือ null ถ้าไม่มี
+         */
+        suspend operator fun invoke(
+            chassisNo: String,
+            currentDate: String,
+            currentShift: String,
+        ): Result<DailyChecksheet?> =
+            checksheetRepository.getPreviousChecksheet(
+                chassisNo = chassisNo,
+                currentDate = currentDate,
+                currentShift = currentShift,
+            )
     }
-}

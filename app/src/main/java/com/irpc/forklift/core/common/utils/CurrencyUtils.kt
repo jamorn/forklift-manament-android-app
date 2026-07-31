@@ -10,16 +10,10 @@ import java.util.Locale
 object CurrencyUtils {
     private val thbFormat = NumberFormat.getCurrencyInstance(Locale("th", "TH"))
 
-    fun formatThaiBaht(amount: Double): String {
-        return thbFormat.format(amount)
-    }
+    fun formatThaiBaht(amount: Double): String = thbFormat.format(amount)
 
-    fun formatThaiBaht(amount: Int): String {
-        return thbFormat.format(amount.toDouble())
-    }
+    fun formatThaiBaht(amount: Int): String = thbFormat.format(amount.toDouble())
 
     /** แบบย่อ: 1,500 → "1,500" ไม่มีสกุลเงิน */
-    fun formatCompact(amount: Int): String {
-        return NumberFormat.getNumberInstance(Locale("th", "TH")).format(amount)
-    }
+    fun formatCompact(amount: Int): String = NumberFormat.getNumberInstance(Locale("th", "TH")).format(amount)
 }

@@ -9,8 +9,8 @@ import org.json.JSONObject
  * 📋 Checksheet Mapper — Entity ↔ Domain
  */
 object ChecksheetMapper {
-    fun entityToDomain(entity: ChecksheetEntity): DailyChecksheet {
-        return DailyChecksheet(
+    fun entityToDomain(entity: ChecksheetEntity): DailyChecksheet =
+        DailyChecksheet(
             id = entity.id.toString(),
             date = entity.date,
             shift = entity.shift,
@@ -25,10 +25,12 @@ object ChecksheetMapper {
             status = entity.status,
             created_at = entity.created_at,
         )
-    }
 
-    fun domainToEntity(domain: DailyChecksheet, synced: Boolean = false): ChecksheetEntity {
-        return ChecksheetEntity(
+    fun domainToEntity(
+        domain: DailyChecksheet,
+        synced: Boolean = false,
+    ): ChecksheetEntity =
+        ChecksheetEntity(
             date = domain.date,
             shift = domain.shift,
             chassis_no = domain.chassis_no,
@@ -42,7 +44,6 @@ object ChecksheetMapper {
             created_at = domain.created_at,
             synced = synced,
         )
-    }
 
     private fun parseMap(json: String): Map<String, String> {
         if (json.isBlank()) return emptyMap()
@@ -50,7 +51,5 @@ object ChecksheetMapper {
         return obj.keys().asSequence().associateWith { obj.getString(it) }
     }
 
-    private fun toJson(map: Map<String, String>): String {
-        return JSONObject(map as Map<String, Any?>).toString()
-    }
+    private fun toJson(map: Map<String, String>): String = JSONObject(map as Map<String, Any?>).toString()
 }

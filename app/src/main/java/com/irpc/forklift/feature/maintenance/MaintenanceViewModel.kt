@@ -1,11 +1,6 @@
 // 📁 feature/maintenance/MaintenanceViewModel.kt
 package com.irpc.forklift.feature.maintenance
 
-import androidx.lifecycle.ViewModel
-import com.irpc.forklift.core.domain.model.MaintenanceLog
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
 /**
  * 🔧 Maintenance ViewModel
  *

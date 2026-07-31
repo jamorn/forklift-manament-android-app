@@ -30,10 +30,11 @@ fun ChecklistForm(
     onSubmit: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
     ) {
         // Copy-Forward Banner
         if (previousChecksheet != null) {
@@ -102,4 +103,3 @@ fun ChecklistForm(
         Spacer(Modifier.height(24.dp))
     }
 }
-

@@ -12,10 +12,10 @@ import javax.inject.Inject
  * - ถ้า offline → queue ไว้ (sync ทีหลัง)
  * - อัปเดต vehicle status ถ้าจำเป็น
  */
-class SubmitChecksheetUseCase @Inject constructor(
-    private val checksheetRepository: ChecksheetRepository,
-) {
-    suspend operator fun invoke(checksheet: DailyChecksheet): Result<String> {
-        return checksheetRepository.saveChecksheet(checksheet)
+class SubmitChecksheetUseCase
+    @Inject
+    constructor(
+        private val checksheetRepository: ChecksheetRepository,
+    ) {
+        suspend operator fun invoke(checksheet: DailyChecksheet): Result<String> = checksheetRepository.saveChecksheet(checksheet)
     }
-}

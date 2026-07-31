@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.irpc.forklift.feature.checklist.components.CheckItemRow.CheckItemRow
 import com.irpc.forklift.core.data.mock.MockData.ChecklistItem
+import com.irpc.forklift.feature.checklist.components.CheckItemRow.CheckItemRow
 
 /**
  * 📂 Category Section — หมวดหมู่ในการตรวจเช็ค
@@ -48,4 +48,3 @@ fun CategorySection(
         }
     }
 }
-

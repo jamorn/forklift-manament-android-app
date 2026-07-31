@@ -3,16 +3,16 @@ package com.irpc.forklift.feature.checklist
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.irpc.forklift.feature.checklist.components.VehicleSelector
-import com.irpc.forklift.feature.checklist.components.ChecklistForm
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.feature.checklist.components.ChecklistForm
 import com.irpc.forklift.feature.checklist.components.SuccessScreen.SuccessScreen
+import com.irpc.forklift.feature.checklist.components.VehicleSelector
 import com.irpc.forklift.ui.components.LoadingSpinner
 
 /**
@@ -46,9 +46,11 @@ fun ChecklistScreen(
         if (uiState.step == 3) {
             uiState.selectedVehicle?.let { v ->
                 val user = uiState.currentUser ?: "unknown"
-                val time = java.time.LocalTime.now().format(
-                    java.time.format.DateTimeFormatter.ofPattern("HH:mm")
-                )
+                val time =
+                    java.time.LocalTime.now().format(
+                        java.time.format.DateTimeFormatter
+                            .ofPattern("HH:mm"),
+                    )
                 onChecklistSaved(v.chassis_no, "$time น. โดย $user")
             }
         }
@@ -58,61 +60,69 @@ fun ChecklistScreen(
         topBar = {
             when (uiState.step) {
                 1 -> TopAppBar(title = { Text("เลือกรถโฟร์คลิฟท์") })
-                2 -> uiState.selectedVehicle?.let { v ->
+                2 ->
+                    uiState.selectedVehicle?.let { v ->
+                        TopAppBar(
+                            title = {},
+                            navigationIcon = {
+                                TextButton(onClick = onBack) {
+                                    Text("← กลับ", style = MaterialTheme.typography.bodyLarge)
+                                }
+                            },
+                            actions = {
+                                Text(
+                                    text = v.current_flno,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(end = 16.dp),
+                                )
+                            },
+                        )
+                    }
+                3 ->
                     TopAppBar(
-                        title = {},
+                        title = { Text("บันทึกสำเร็จ") },
                         navigationIcon = {
-                            TextButton(onClick = onBack) {
-                                Text("← กลับ", style = MaterialTheme.typography.bodyLarge)
+                            TextButton(onClick = {
+                                viewModel.reset()
+                                onBack()
+                            }) {
+                                Text("← กลับ")
                             }
                         },
-                        actions = {
-                            Text(
-                                text = v.current_flno,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(end = 16.dp),
-                            )
-                        },
                     )
-                }
-                3 -> TopAppBar(
-                    title = { Text("บันทึกสำเร็จ") },
-                    navigationIcon = {
-                        TextButton(onClick = { viewModel.reset(); onBack() }) {
-                            Text("← กลับ")
-                        }
-                    },
-                )
             }
-        }
+        },
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (uiState.step) {
-                1 -> VehicleSelector(
-                    vehicles = uiState.vehicles,
-                    onVehicleSelected = { vehicle -> viewModel.selectVehicle(vehicle) },
-                )
-                2 -> uiState.selectedVehicle?.let { vehicle ->
-                    ChecklistForm(
-                        vehicle = vehicle,
-                        previousChecksheet = uiState.previousChecksheet,
-                        results = uiState.checkResults,
-                        remarks = uiState.remarks,
-                        mainRemark = uiState.mainRemark,
-                        manhourMeter = uiState.manhourMeter,
-                        onItemChecked = { itemId, result -> viewModel.checkItem(itemId, result) },
-                        onItemRemark = { itemId, remark -> viewModel.remarkItem(itemId, remark) },
-                        onMainRemarkChange = { viewModel.setMainRemark(it) },
-                        onManhourMeterChange = { viewModel.setManhourMeter(it) },
-                        onPassAll = { viewModel.passAllItems() },
-                        onSubmit = { viewModel.submitChecksheet() },
+                1 ->
+                    VehicleSelector(
+                        vehicles = uiState.vehicles,
+                        onVehicleSelected = { vehicle -> viewModel.selectVehicle(vehicle) },
                     )
-                }
-                3 -> SuccessScreen(
-                    onGoHome = { viewModel.reset() },
-                )
+                2 ->
+                    uiState.selectedVehicle?.let { vehicle ->
+                        ChecklistForm(
+                            vehicle = vehicle,
+                            previousChecksheet = uiState.previousChecksheet,
+                            results = uiState.checkResults,
+                            remarks = uiState.remarks,
+                            mainRemark = uiState.mainRemark,
+                            manhourMeter = uiState.manhourMeter,
+                            onItemChecked = { itemId, result -> viewModel.checkItem(itemId, result) },
+                            onItemRemark = { itemId, remark -> viewModel.remarkItem(itemId, remark) },
+                            onMainRemarkChange = { viewModel.setMainRemark(it) },
+                            onManhourMeterChange = { viewModel.setManhourMeter(it) },
+                            onPassAll = { viewModel.passAllItems() },
+                            onSubmit = { viewModel.submitChecksheet() },
+                        )
+                    }
+                3 ->
+                    SuccessScreen(
+                        onGoHome = { viewModel.reset() },
+                    )
             }
 
             // Loading overlay
@@ -122,4 +132,3 @@ fun ChecklistScreen(
         }
     }
 }
-

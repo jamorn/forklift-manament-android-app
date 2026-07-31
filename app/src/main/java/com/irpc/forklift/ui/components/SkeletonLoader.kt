@@ -28,23 +28,26 @@ fun SkeletonLoader(
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
     )
 
     Box(
-        modifier = modifier
-            .then(
-                if (width != null) Modifier.width(width.dp)
-                else Modifier.fillMaxWidth()
-            )
-            .height(height.dp)
-            .clip(MaterialTheme.shapes.small)
-            .background(
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = alpha)
-            )
+        modifier =
+            modifier
+                .then(
+                    if (width != null) {
+                        Modifier.width(width.dp)
+                    } else {
+                        Modifier.fillMaxWidth()
+                    },
+                ).height(height.dp)
+                .clip(MaterialTheme.shapes.small)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = alpha),
+                ),
     )
 }
-
