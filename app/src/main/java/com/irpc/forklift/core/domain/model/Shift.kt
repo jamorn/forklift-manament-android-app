@@ -30,6 +30,13 @@ data class TeamShift(
     val teamId: String, // "A" | "B" | "C" | "D"
     val teamName: String, // "กะ A" | "กะ B" ...
     val shift: ShiftCode?, // M | E | N | null (Off)
+    val subIndex: Int = 1, // 1 หรือ 2 — บอกว่าเป็นกะรอบไหน (เช้า 1 / เช้า 2)
+)
+
+// / ข้อมูลกะ + ตำแหน่งใน cycle — ใช้คำนวณ "เช้า 1 / เช้า 2" ฯลฯ
+data class ShiftDetail(
+    val shift: ShiftCode?, // null = Off
+    val subIndex: Int, // 1 หรือ 2
 )
 
 // / ตารางเวรของวันหนึ่ง — รวมทุกทีม (4 ทีม)

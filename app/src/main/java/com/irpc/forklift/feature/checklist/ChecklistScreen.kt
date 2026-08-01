@@ -59,7 +59,7 @@ fun ChecklistScreen(
     Scaffold(
         topBar = {
             when (uiState.step) {
-                1 -> TopAppBar(title = { Text("เลือกรถโฟร์คลิฟท์") })
+                1 -> TopAppBar(title = { Text("เลือกรถForklift") })
                 2 ->
                     uiState.selectedVehicle?.let { v ->
                         TopAppBar(

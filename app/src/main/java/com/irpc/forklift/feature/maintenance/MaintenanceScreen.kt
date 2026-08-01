@@ -123,8 +123,29 @@ fun MaintenanceScreen(onBack: () -> Unit) {
         topBar = { TopAppBar(title = { Text("🔧 ซ่อมบำรุง") }, navigationIcon = { TextButton(onClick = onBack) { Text("← กลับ") } }) },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            TabRow(selectedTabIndex = tab) {
-                tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t, fontSize = 13.sp) }) }
+            TabRow(
+                selectedTabIndex = tab,
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
+                tabs.forEachIndexed { i, t ->
+                    Tab(
+                        selected = tab == i,
+                        onClick = { tab = i },
+                        text = {
+                            Text(
+                                t,
+                                fontSize = 13.sp,
+                                color =
+                                    if (tab == i) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                fontWeight = if (tab == i) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        },
+                    )
+                }
             }
             when (tab) {
                 0 -> PlannedTab(plannedJobs)
@@ -139,13 +160,13 @@ fun MaintenanceScreen(onBack: () -> Unit) {
 fun PlannedTab(jobs: List<MaintenanceJob>) {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1E40AF).copy(alpha = 0.1f))) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1E40AF))) {
                 Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("📅", fontSize = 24.sp)
                     Spacer(Modifier.width(12.dp))
                     Column {
-                        Text("งานซ่อมตามแผน", fontWeight = FontWeight.Bold, color = Color(0xFF1E40AF))
-                        Text("จำนวน ${jobs.size} รายการ ที่ต้องดำเนินการ", style = MaterialTheme.typography.bodySmall)
+                        Text("งานซ่อมตามแผน", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("จำนวน ${jobs.size} รายการ ที่ต้องดำเนินการ", color = Color.White.copy(alpha = 0.85f))
                     }
                 }
             }
@@ -161,13 +182,13 @@ fun PlannedTab(jobs: List<MaintenanceJob>) {
 fun EmergencyTab(jobs: List<MaintenanceJob>) {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFDC2626).copy(alpha = 0.1f))) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFDC2626))) {
                 Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("🔧", fontSize = 24.sp)
                     Spacer(Modifier.width(12.dp))
                     Column {
-                        Text("ซ่อมฉุกเฉิน", fontWeight = FontWeight.Bold, color = Color(0xFFDC2626))
-                        Text("จำนวน ${jobs.size} ครั้ง ที่เกิดขึ้น", style = MaterialTheme.typography.bodySmall)
+                        Text("ซ่อมฉุกเฉิน", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("จำนวน ${jobs.size} ครั้ง ที่เกิดขึ้น", color = Color.White.copy(alpha = 0.85f))
                     }
                 }
             }
@@ -214,10 +235,10 @@ fun JobCard(job: MaintenanceJob) {
                     Text("${job.flno} · ${job.chassis}", fontWeight = FontWeight.Bold)
                     Text(job.dept, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Surface(color = statusColor.copy(alpha = 0.15f), shape = MaterialTheme.shapes.small) {
+                Surface(color = statusColor, shape = MaterialTheme.shapes.small) {
                     Text(
                         statusText,
-                        color = statusColor,
+                        color = Color.White,
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     )
@@ -237,10 +258,10 @@ fun JobCard(job: MaintenanceJob) {
             }
             if (job.type == "ซ่อมฉุกเฉิน") {
                 Spacer(Modifier.height(4.dp))
-                Surface(color = Color(0xFFDC2626).copy(alpha = 0.1f), shape = MaterialTheme.shapes.small) {
+                Surface(color = Color(0xFFDC2626), shape = MaterialTheme.shapes.small) {
                     Text(
                         "⚠️ ซ่อมฉุกเฉิน",
-                        color = Color(0xFFDC2626),
+                        color = Color.White,
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     )

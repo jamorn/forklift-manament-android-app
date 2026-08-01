@@ -27,12 +27,12 @@ fun AppBadge(
 ) {
     Surface(
         modifier = modifier,
-        color = color.copy(alpha = 0.1f),
+        color = color,
         shape = MaterialTheme.shapes.small,
     ) {
         Text(
             text = text,
-            color = color,
+            color = Color.White,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         )

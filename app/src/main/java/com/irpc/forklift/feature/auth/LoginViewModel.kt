@@ -64,4 +64,10 @@ class LoginViewModel
         fun clearError() {
             _uiState.value = _uiState.value.copy(error = null)
         }
+
+        /** reset state กลับเป็นหน้า login เริ่มต้น — ใช้ตอนออกจากระบบ */
+        fun resetState() {
+            _uiState.value =
+                LoginUiState(mockUsers = AuthRepositoryImpl.MOCK_USERS.values.toList())
+        }
     }

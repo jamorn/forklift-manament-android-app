@@ -18,14 +18,35 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ReportScreen(onBack: () -> Unit) {
     var tab by remember { mutableStateOf(0) }
-    val tabs = listOf("📊 รายงานประจำเดือน", "📈 สถิติรายวัน", "📑 สรุปประจำปี")
+    val tabs = listOf("📊 รายเดือน", "📈 สถิติรายวัน", "📑 สรุปประจำปี")
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("📈 รายงาน") }, navigationIcon = { TextButton(onClick = onBack) { Text("← กลับ") } }) },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            TabRow(selectedTabIndex = tab) {
-                tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t, fontSize = 13.sp) }) }
+            TabRow(
+                selectedTabIndex = tab,
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
+                tabs.forEachIndexed { i, t ->
+                    Tab(
+                        selected = tab == i,
+                        onClick = { tab = i },
+                        text = {
+                            Text(
+                                t,
+                                fontSize = 13.sp,
+                                color =
+                                    if (tab == i) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                fontWeight = if (tab == i) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        },
+                    )
+                }
             }
             when (tab) {
                 0 -> MonthlyReportTab()
@@ -40,9 +61,9 @@ fun ReportScreen(onBack: () -> Unit) {
 fun MonthlyReportTab() {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1E40AF).copy(alpha = 0.1f))) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF1E40AF))) {
                 Column(Modifier.padding(16.dp)) {
-                    Text("📊 รายงานประจำเดือน กรกฎาคม 2568", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text("📊 รายงานประจำเดือน กรกฎาคม 2568", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.White)
                     Spacer(Modifier.height(8.dp))
 
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -257,14 +278,14 @@ fun YearlySummaryTab() {
         item { Spacer(Modifier.height(16.dp)) }
 
         item {
-            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))) {
+            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color(0xFFB45309))) {
                 Column(Modifier.padding(16.dp)) {
-                    Text("🚀 เป้าหมายปี 2569", fontWeight = FontWeight.Bold, color = Color(0xFFE65100))
+                    Text("🚀 เป้าหมายปี 2569", fontWeight = FontWeight.Bold, color = Color.White)
                     Spacer(Modifier.height(8.dp))
-                    Text("• เพิ่มอัตราการตรวจเช็คเป็น ≥ 95%")
-                    Text("• ลดการซ่อมฉุกเฉินลง 50%")
-                    Text("• ลดค่าใช้จ่ายซ่อมบำรุง 10%")
-                    Text("• MTBF ≥ 300 ชั่วโมง")
+                    Text("• เพิ่มอัตราการตรวจเช็คเป็น ≥ 95%", color = Color.White.copy(alpha = 0.9f))
+                    Text("• ลดการซ่อมฉุกเฉินลง 50%", color = Color.White.copy(alpha = 0.9f))
+                    Text("• ลดค่าใช้จ่ายซ่อมบำรุง 10%", color = Color.White.copy(alpha = 0.9f))
+                    Text("• MTBF ≥ 300 ชั่วโมง", color = Color.White.copy(alpha = 0.9f))
                 }
             }
         }

@@ -39,8 +39,29 @@ fun SupervisorDashboardScreen(onBack: () -> Unit) {
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            TabRow(selectedTabIndex = tab) {
-                tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t, fontSize = 13.sp) }) }
+            TabRow(
+                selectedTabIndex = tab,
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
+                tabs.forEachIndexed { i, t ->
+                    Tab(
+                        selected = tab == i,
+                        onClick = { tab = i },
+                        text = {
+                            Text(
+                                t,
+                                fontSize = 13.sp,
+                                color =
+                                    if (tab == i) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                fontWeight = if (tab == i) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        },
+                    )
+                }
             }
             when (tab) {
                 0 -> OverviewTab()
@@ -65,13 +86,13 @@ fun OverviewTab() {
         }
         item { Spacer(Modifier.height(12.dp)) }
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFF59E0B).copy(alpha = 0.1f))) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFB45309))) {
                 Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("🕐", fontSize = 20.sp)
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("กะเช้า • 28 ก.ค. 68", fontWeight = FontWeight.Bold)
-                        Text("ผู้ปฏิบัติงาน: สมชาย, สมหญิง, สมศักดิ์", style = MaterialTheme.typography.bodySmall)
+                        Text("กะเช้า • 28 ก.ค. 68", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("ผู้ปฏิบัติงาน: สมชาย, สมหญิง, สมศักดิ์", color = Color.White.copy(alpha = 0.85f))
                     }
                 }
             }
@@ -162,10 +183,10 @@ fun StatCard(
     c: Color,
     mod: Modifier,
 ) {
-    Card(modifier = mod, colors = CardDefaults.cardColors(containerColor = c.copy(alpha = 0.1f))) {
+    Card(modifier = mod, colors = CardDefaults.cardColors(containerColor = c)) {
         Column(Modifier.padding(8.dp).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = c)
-            Text(value, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = c)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.9f))
+            Text(value, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 }
@@ -180,13 +201,13 @@ fun MissingTab() {
     val list = listOf(Mv("FL-1203", "FK-003", "PP3 Bagging"), Mv("FL-1206", "FK-006", "HD Bagging"))
     LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
         item {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFEF4444).copy(alpha = 0.1f))) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFFDC2626))) {
                 Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("❌", fontSize = 24.sp)
                     Spacer(Modifier.width(12.dp))
                     Column {
-                        Text("รถที่ยังไม่ตรวจเช็ค", fontWeight = FontWeight.Bold, color = Color(0xFFEF4444))
-                        Text("จำนวน ${list.size} คัน", style = MaterialTheme.typography.bodySmall)
+                        Text("รถที่ยังไม่ตรวจเช็ค", fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("จำนวน ${list.size} คัน", color = Color.White.copy(alpha = 0.85f))
                     }
                 }
             }
@@ -253,10 +274,10 @@ fun Badge(
     m: String,
     c: Color,
 ) {
-    Surface(color = c.copy(alpha = 0.15f), shape = MaterialTheme.shapes.small) {
+    Surface(color = c, shape = MaterialTheme.shapes.small) {
         Text(
             text = m,
-            color = c,
+            color = Color.White,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         )

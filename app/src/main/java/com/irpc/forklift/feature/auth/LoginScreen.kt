@@ -10,7 +10,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.feature.auth.components.MockUserSelector
 
@@ -23,7 +22,7 @@ import com.irpc.forklift.feature.auth.components.MockUserSelector
 @Composable
 fun LoginScreen(
     onLoginSuccess: (UserProfile) -> Unit,
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: LoginViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

@@ -17,10 +17,13 @@ import androidx.compose.ui.Modifier
 import com.irpc.forklift.core.common.utils.DateUtils
 import com.irpc.forklift.core.data.local.CheckedVehicleStore
 import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.domain.model.ShiftCode
 import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.irpc.forklift.feature.auth.LoginScreen
+import com.irpc.forklift.feature.auth.LoginViewModel
 import com.irpc.forklift.feature.dashboard.SupervisorDashboardScreen
 import com.irpc.forklift.feature.maintenance.MaintenanceScreen
 import com.irpc.forklift.feature.menu.MainMenuScreen
@@ -56,9 +59,10 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
     var profile by remember { mutableStateOf<UserProfile?>(null) }
     var selectedV by remember { mutableStateOf<Vehicle?>(null) }
 
-    // ตารางเวรวันนี้ (ทุกทีม A/B/C/D — ใครอยู่กะอะไร)
+    // ตารางเวรวันนี้ + กะตรงกับเวลาปัจจุบัน
     val shiftUseCase = remember { GetCurrentShiftUseCase() }
     val todayShifts = remember { shiftUseCase.getTodayShifts() }
+    val currentShift = remember { shiftUseCase.getShiftByTime() }
     val todayStr = DateUtils.getTodayString()
 
     // ติดตามรถที่ตรวจแล้วในวันนี้ — persist ลง SharedPreferences (ผ่าน CheckedVehicleStore)
@@ -72,10 +76,22 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
 
     val isOperator: Boolean = profile?.roles?.role == "operator"
     val canAccessMenu: Boolean = profile?.roles?.role in listOf("sa", "admin", "super")
+    // ViewModel scope ระดับ Activity — อยู่รอดผ่าน screen change
+    val loginViewModel: LoginViewModel = hiltViewModel()
+
+    // ออกจากระบบ — reset กลับหน้า login เต็มตัว (ไม่มี state ค้าง)
+    val logout: () -> Unit = {
+        loginViewModel.resetState()
+        profile = null
+        selectedV = null
+        checkedVehicles.clear()
+        screen = "login"
+    }
 
     when (screen) {
         "login" ->
             LoginScreen(
+                viewModel = loginViewModel,
                 onLoginSuccess = { p ->
                     profile = p
                     screen = if (p.roles.role == "operator") "vehicles" else "menu"
@@ -91,7 +107,9 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
         "vehicles" ->
             VehicleListScreen(
                 todayShifts = todayShifts,
+                currentShift = currentShift,
                 checkedVehicles = checkedVehicles,
+                isOperator = isOperator,
                 onVehicleClick = { v ->
                     selectedV = v
                     screen = "checklist"
@@ -99,6 +117,9 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
                 onScan = { screen = "scan" },
                 onBack = {
                     screen = if (isOperator) "login" else "menu"
+                },
+                onLogout = {
+                    logout()
                 },
             )
         "scan" ->

@@ -50,10 +50,16 @@ fun MainMenuScreen(
                 "IRPC Forklift Management",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             Spacer(Modifier.height(4.dp))
-            Text("ระบบตรวจสอบรถโฟร์คลิฟท์", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                "ระบบตรวจสอบรถโฟร์คลิฟท์",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
             Spacer(Modifier.height(40.dp))
 
             // Menu buttons
@@ -61,9 +67,9 @@ fun MainMenuScreen(
             Spacer(Modifier.height(12.dp))
             MenuButton("📊 Supervisor Dashboard", "ดูภาพรวม สถิติ รถค้าง", Color(0xFF059669), onClick = onGoDashboard)
             Spacer(Modifier.height(12.dp))
-            MenuButton("🔧 ซ่อมบำรุง", "ตารางงานซ่อมและการดูแลรักษา", Color(0xFFD97706), onClick = onGoMaintenance)
+            MenuButton("🔧 ซ่อมบำรุง", "ตารางงานซ่อมและการดูแลรักษา", Color(0xFFB45309), onClick = onGoMaintenance)
             Spacer(Modifier.height(12.dp))
-            MenuButton("📈 รายงาน", "สถิติและรายงานประจำเดือน", Color(0xFF7C3AED), onClick = onGoReport)
+            MenuButton("📈 รายงาน", "สถิติและรายงานประจำเดือน", Color(0xFF6D28D9), onClick = onGoReport)
 
             Spacer(Modifier.height(40.dp))
             Text("v1.0.0-dev", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -82,11 +88,21 @@ fun MenuButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(72.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f)),
+        colors = CardDefaults.cardColors(containerColor = color),
     ) {
         Row(Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(title, fontWeight = FontWeight.Bold, color = color, fontSize = 16.sp, modifier = Modifier.weight(1f))
-            Text(subtitle, style = MaterialTheme.typography.labelSmall, color = color.copy(alpha = 0.7f))
+            Text(
+                title,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.85f),
+            )
         }
     }
 }

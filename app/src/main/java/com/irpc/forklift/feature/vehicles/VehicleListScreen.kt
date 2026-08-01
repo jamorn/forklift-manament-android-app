@@ -10,18 +10,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,9 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.domain.model.ShiftCode
 import com.irpc.forklift.core.domain.model.TodayShifts
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.ui.components.StatusBadge
+import com.irpc.forklift.ui.theme.ForkliftColors
 
 // =====================================================================
 // 🚛 VEHICLE LIST
@@ -40,10 +47,13 @@ import com.irpc.forklift.ui.components.StatusBadge
 @Composable
 fun VehicleListScreen(
     todayShifts: TodayShifts? = null,
+    currentShift: ShiftCode? = null,
     checkedVehicles: Map<String, String> = emptyMap(),
+    isOperator: Boolean = false,
     onVehicleClick: (Vehicle) -> Unit,
     onScan: () -> Unit,
     onBack: () -> Unit,
+    onLogout: () -> Unit = {},
 ) {
     val deptNames =
         mapOf(
@@ -69,17 +79,66 @@ fun VehicleListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("เลือกรถโฟร์คลิฟท์ 🚛") },
-                navigationIcon = { TextButton(onClick = onBack) { Text("← กลับ") } },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = ForkliftColors.BgSecondary,
+                        titleContentColor = ForkliftColors.TextPrimary,
+                    ),
+                title = {
+                    Text(
+                        "เลือกรถ Forklift 🚛",
+                        color = ForkliftColors.TextPrimary,
+                        fontWeight = FontWeight.Bold,
+                    )
+                },
+                navigationIcon = {
+                    if (isOperator) {
+                        TextButton(onClick = onLogout) {
+                            Icon(
+                                imageVector = Icons.Filled.PowerSettingsNew,
+                                contentDescription = "ออกจากระบบ",
+                                tint = ForkliftColors.Danger, // สีแดง
+                                modifier = Modifier.size(18.dp),
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("ออกจากระบบ", color = ForkliftColors.Danger, fontWeight = FontWeight.SemiBold)
+                        }
+                    } else {
+                        TextButton(onClick = onBack) {
+                            Text(
+                                "← กลับ",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
+                    }
+                },
                 actions = {
-                    TextButton(onClick = onScan) { Text("📷 สแกน") }
+                    TextButton(onClick = onScan) {
+                        Text(
+                            "📷 สแกน",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 },
             )
         },
     ) { padding ->
         LazyColumn(Modifier.fillMaxSize().padding(padding).padding(horizontal = 12.dp)) {
-            // Summary header with shift info (ตารางเวรวันนี้)
+            // Summary header — แสดงเฉพาะทีมที่ตรงกับกะเวลาปัจจุบัน
             item {
+                val todayStr =
+                    java.time.LocalDate.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+                    )
+                // หาทีมที่วันนี้อยู่กะเดียวกับ clock time ปัจจุบัน (M/E/N)
+                val matchingTeam =
+                    todayShifts?.teams?.firstOrNull { it.shift == currentShift }
+                val teamName = matchingTeam?.teamName?.replace("กะ ", "") ?: "?"
+                val shiftLabel = currentShift?.label ?: "?"
+                val subIndex = matchingTeam?.subIndex ?: 1
+
                 Card(
                     colors =
                         CardDefaults.cardColors(
@@ -96,21 +155,12 @@ fun VehicleListScreen(
                     Column(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                     ) {
-                        // แสดงตารางเวร: แต่ละทีมวันนี้อยู่กะอะไร
-                        todayShifts?.teams?.forEach { team ->
-                            val label = team.shift?.label ?: "หยุด"
-                            Text(
-                                text = "${team.teamName}: กะ$label",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                color =
-                                    if (team.shift == null) {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    } else {
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    },
-                            )
-                        }
+                        Text(
+                            text = "วันนี้ $todayStr   กะ $teamName: $shiftLabel $subIndex",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text =

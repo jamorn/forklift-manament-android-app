@@ -7,7 +7,7 @@
     <string name="btn_cancel">ยกเลิก</string>
     <string name="btn_confirm">ยืนยัน</string>
     <string name="btn_go_home">กลับหน้าแรก</string>
-    <string name="label_vehicle_select">เลือกรถโฟร์คลิฟท์</string>
+    <string name="label_vehicle_select">เลือกรถForklift</string>
     <string name="label_shift_morning">กะเช้า</string>
     <string name="label_shift_evening">กะบ่าย</string>
     <string name="label_shift_night">กะดึก</string>

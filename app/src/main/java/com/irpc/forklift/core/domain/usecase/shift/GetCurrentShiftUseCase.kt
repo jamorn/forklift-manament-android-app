@@ -3,6 +3,7 @@ package com.irpc.forklift.core.domain.usecase.shift
 import com.irpc.forklift.core.common.constants.ShiftConstants
 import com.irpc.forklift.core.common.utils.DateUtils
 import com.irpc.forklift.core.domain.model.ShiftCode
+import com.irpc.forklift.core.domain.model.ShiftDetail
 import com.irpc.forklift.core.domain.model.TeamShift
 import com.irpc.forklift.core.domain.model.TodayShifts
 import java.time.LocalDate
@@ -33,11 +34,12 @@ class GetCurrentShiftUseCase
         fun getTodayShifts(targetDate: LocalDate = LocalDate.now()): TodayShifts {
             val teams =
                 ShiftConstants.TEAMS.map { team ->
-                    val code = getShiftCodeForTeam(team.offset, targetDate)
+                    val detail = getShiftDetailForTeam(team.offset, targetDate)
                     TeamShift(
                         teamId = team.id,
                         teamName = team.name,
-                        shift = code, // null = Off/วันหยุด
+                        shift = detail.shift, // null = Off/วันหยุด
+                        subIndex = detail.subIndex,
                     )
                 }
             return TodayShifts(
@@ -46,7 +48,17 @@ class GetCurrentShiftUseCase
             )
         }
 
-        /** คำนวณกะของทีมหนึ่ง (offset) ประจำวัน targetDate — คืน null ถ้า Off */
+        /** คำนวณกะของทีมหนึ่ง (offset) ประจำวัน targetDate — คืน ShiftDetail (shift + subIndex) ถ้า Off → shift = null */
+        fun getShiftDetailForTeam(
+            teamId: String,
+            targetDate: LocalDate = LocalDate.now(),
+        ): ShiftDetail {
+            val team = ShiftConstants.TEAMS.firstOrNull { it.id == teamId }
+                ?: return ShiftDetail(shift = null, subIndex = 1)
+            return getShiftDetailForTeam(team.offset, targetDate)
+        }
+
+        /** คำนวณกะของทีมหนึ่ง (offset) — คืน ShiftCode? (null = Off) เหมือนเดิม แต่ใช้ภายใน */
         fun getShiftForTeam(
             teamId: String,
             targetDate: LocalDate = LocalDate.now(),
@@ -59,16 +71,32 @@ class GetCurrentShiftUseCase
             teamOffset: Int,
             targetDate: LocalDate,
         ): ShiftCode? {
+            val detail = getShiftDetailForTeam(teamOffset, targetDate)
+            return detail.shift
+        }
+
+        private fun getShiftDetailForTeam(
+            teamOffset: Int,
+            targetDate: LocalDate,
+        ): ShiftDetail {
             val base = LocalDate.parse(ShiftConstants.BASE_DATE)
             val diffDays = ChronoUnit.DAYS.between(base, targetDate).toInt()
             val idx = ((diffDays + teamOffset) % ShiftConstants.CYCLE_LENGTH)
-            val code = ShiftConstants.SHIFT_CYCLE[if (idx < 0) idx + ShiftConstants.CYCLE_LENGTH else idx]
-            return when (code) {
-                "M" -> ShiftCode.M
-                "E" -> ShiftCode.E
-                "N" -> ShiftCode.N
-                else -> null // "O" = Off/วันหยุด
-            }
+            val safeIdx = if (idx < 0) idx + ShiftConstants.CYCLE_LENGTH else idx
+            val code = ShiftConstants.SHIFT_CYCLE[safeIdx]
+
+            // subIndex: ครั้งที่ 1 หรือ 2 ของกะนั้น (จาก index ใน cycle)
+            // index 0=M1, 1=M2, 2=E1, 3=E2, 4=N1, 5=N2, 6=O1, 7=O2
+            val subIndex = (safeIdx % 2) + 1
+
+            val shift =
+                when (code) {
+                    "M" -> ShiftCode.M
+                    "E" -> ShiftCode.E
+                    "N" -> ShiftCode.N
+                    else -> null // "O" = Off/วันหยุด
+                }
+            return ShiftDetail(shift = shift, subIndex = subIndex)
         }
 
         // --------------------------------------------------------------
