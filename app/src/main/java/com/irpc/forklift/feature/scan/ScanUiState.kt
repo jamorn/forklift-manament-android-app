@@ -1,3 +1,4 @@
+// feature/scan/ScanUiState.kt
 package com.irpc.forklift.feature.scan
 
 import com.irpc.forklift.core.domain.model.Vehicle

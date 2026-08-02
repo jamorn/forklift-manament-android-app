@@ -77,6 +77,7 @@ fun VehicleListScreen(
                         "เลือกรถ Forklift 🚛",
                         color = ForkliftColors.TextPrimary,
                         fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp,
                     )
                 },
                 navigationIcon = {
@@ -86,10 +87,10 @@ fun VehicleListScreen(
                                 imageVector = Icons.Filled.PowerSettingsNew,
                                 contentDescription = "ออกจากระบบ",
                                 tint = ForkliftColors.Danger, // สีแดง
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(22.dp),
                             )
-                            Spacer(Modifier.width(4.dp))
-                            Text("ออกจากระบบ", color = ForkliftColors.Danger, fontWeight = FontWeight.SemiBold)
+                            Spacer(Modifier.width(6.dp))
+                            Text("ออกจากระบบ", color = ForkliftColors.Danger, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
                         }
                     } else {
                         TextButton(onClick = onBack) {
@@ -97,6 +98,7 @@ fun VehicleListScreen(
                                 "← กลับ",
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.SemiBold,
+                                fontSize = 18.sp,
                             )
                         }
                     }
@@ -107,6 +109,7 @@ fun VehicleListScreen(
                             "📷 สแกน",
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold,
+                            fontSize = 18.sp,
                         )
                     }
                 },
@@ -141,15 +144,16 @@ fun VehicleListScreen(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                 ) {
                     Column(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
                     ) {
                         Text(
                             text = "วันนี้ $todayStr   กะ $teamName: $shiftLabel $subIndex",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(6.dp))
                         Text(
                             text =
                                 if (checkedCount == vehicles.size) {
@@ -159,6 +163,7 @@ fun VehicleListScreen(
                                 },
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
                             color =
                                 if (checkedCount == vehicles.size) {
                                     Color(0xFF16A34A)
@@ -190,20 +195,22 @@ fun VehicleListScreen(
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(
                                         text = "${DepartmentConstants.deptIcons[deptId] ?: "📦"} ${DepartmentConstants.displayName(deptId)}",
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
                                     Spacer(Modifier.weight(1f))
                                     val deptChecked = list.count { it.chassis_no in checkedVehicles }
                                     Text(
                                         text = "$deptChecked/${list.size}",
-                                        style = MaterialTheme.typography.labelSmall,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontSize = 16.sp,
                                         color =
                                             if (deptChecked == list.size) {
                                                 Color(0xFF16A34A)
@@ -252,7 +259,7 @@ fun VehicleCard(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 4.dp),
+                .padding(horizontal = 10.dp, vertical = 6.dp),
         shape = MaterialTheme.shapes.medium,
         colors =
             CardDefaults.cardColors(
@@ -263,36 +270,33 @@ fun VehicleCard(
                         MaterialTheme.colorScheme.surface
                     },
             ),
-        border = BorderStroke(1.dp, borderColor),
+        border = BorderStroke(1.5.dp, borderColor),
     ) {
         Row(
-            Modifier.padding(horizontal = 14.dp, vertical = 12.dp).fillMaxWidth(),
+            Modifier.padding(horizontal = 16.dp, vertical = 16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(v.current_flno, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text(v.current_flno, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, fontSize = 22.sp)
                     if (isChecked) {
                         Spacer(Modifier.width(8.dp))
-                        Text("✅", fontSize = 14.sp)
+                        Text("✅", fontSize = 18.sp)
                     }
                 }
                 if (isChecked) {
                     Text(
                         checkedInfo ?: "",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 16.sp,
                         color = Color(0xFF16A34A),
                     )
                 } else {
-                    Text(
-                        "${v.chassis_no} · ${v.model}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(6.dp))
                     Text(
                         "⏳ รอตรวจ",
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontSize = 16.sp,
                         color = Color(0xFFF59E0B),
                     )
                 }

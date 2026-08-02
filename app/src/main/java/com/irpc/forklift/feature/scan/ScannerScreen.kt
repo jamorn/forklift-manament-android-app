@@ -1,3 +1,4 @@
+// feature/scan/ScannerScreen.kt
 package com.irpc.forklift.feature.scan
 
 import android.util.Size

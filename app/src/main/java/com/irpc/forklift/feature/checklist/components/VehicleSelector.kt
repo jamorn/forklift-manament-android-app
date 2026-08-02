@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.irpc.forklift.core.common.constants.DepartmentConstants
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.ui.components.StatusBadge
 
@@ -27,31 +28,12 @@ fun VehicleSelector(
     vehicles: List<Vehicle>,
     onVehicleSelected: (Vehicle) -> Unit,
 ) {
-    val deptNames =
-        mapOf(
-            "dept-bagging-pp12" to "PP12 Bagging",
-            "dept-bagging-pp3" to "PP3 Bagging",
-            "dept-bagging-ppe" to "PPE Bagging",
-            "dept-bagging-ppc" to "PPC Bagging",
-            "dept-bagging-hd" to "HD Bagging",
-            "dept-sealroom" to "Seal Room",
-        )
-
-    LazyColumn(
+        LazyColumn(
         modifier =
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
     ) {
-        item {
-            Text(
-                "Bagging (ไม่รวม SASB)",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-        }
-
         val grouped = vehicles.groupBy { it.department_id }
         grouped.forEach { (deptId, list) ->
             item {
@@ -64,7 +46,7 @@ fun VehicleSelector(
                             .padding(vertical = 4.dp),
                 ) {
                     Text(
-                        text = deptNames[deptId] ?: deptId,
+                        text = DepartmentConstants.displayName(deptId),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
@@ -113,7 +95,7 @@ private fun VehicleCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    "${vehicle.chassis_no} · ${vehicle.vehicle_type}",
+                    "${vehicle.chassis_no} · ${vehicle.model}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 /**
  * 🏷️ App Badge — Status/Type Badge
@@ -33,8 +34,9 @@ fun AppBadge(
         Text(
             text = text,
             color = Color.White,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
         )
     }
 }

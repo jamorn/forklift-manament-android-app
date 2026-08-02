@@ -45,7 +45,7 @@ fun VehicleRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    vehicle.vehicle_type,
+                    vehicle.model,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

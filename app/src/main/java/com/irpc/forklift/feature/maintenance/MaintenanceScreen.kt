@@ -1,3 +1,4 @@
+//feature/maintenance/MaintenanceScreen.kt
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.irpc.forklift.feature.maintenance
@@ -232,7 +233,7 @@ fun JobCard(job: MaintenanceJob) {
         Column(Modifier.padding(12.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("${job.flno} · ${job.chassis}", fontWeight = FontWeight.Bold)
+                    Text(job.flno, fontWeight = FontWeight.Bold)
                     Text(job.dept, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Surface(color = statusColor, shape = MaterialTheme.shapes.small) {

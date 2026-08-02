@@ -1,3 +1,4 @@
+// feature/checklist/ChecklistUiState.kt
 package com.irpc.forklift.feature.checklist
 
 import com.irpc.forklift.core.domain.model.DailyChecksheet

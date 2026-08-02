@@ -1,6 +1,5 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 // 📁 feature/dashboard/SupervisorDashboardScreen.kt
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.irpc.forklift.feature.dashboard
 
@@ -218,7 +217,7 @@ fun MissingTab() {
                 Row(Modifier.padding(12.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
                         Text(m.flno, fontWeight = FontWeight.Bold)
-                        Text("${m.chassis} · ${m.dept}", style = MaterialTheme.typography.bodySmall)
+                        Text(m.dept, style = MaterialTheme.typography.bodySmall)
                     }
                     Text("กะเช้า", style = MaterialTheme.typography.labelSmall, color = Color(0xFFEF4444))
                 }
