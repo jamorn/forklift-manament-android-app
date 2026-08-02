@@ -3,6 +3,7 @@
 
 package com.irpc.forklift.feature.vehicles
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.irpc.forklift.core.data.mock.MockData
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.irpc.forklift.core.common.constants.DepartmentConstants
 import com.irpc.forklift.core.domain.model.ShiftCode
 import com.irpc.forklift.core.domain.model.TodayShifts
 import com.irpc.forklift.core.domain.model.Vehicle
@@ -54,26 +58,10 @@ fun VehicleListScreen(
     onScan: () -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit = {},
+    viewModel: VehicleListViewModel = hiltViewModel(),
 ) {
-    val deptNames =
-        mapOf(
-            "dept-bagging-pp12" to "PP12 Bagging",
-            "dept-bagging-pp3" to "PP3 Bagging",
-            "dept-bagging-ppe" to "PPE Bagging",
-            "dept-bagging-ppc" to "PPC Bagging",
-            "dept-bagging-hd" to "HD Bagging",
-            "dept-sealroom" to "Seal Room",
-        )
-    val deptIcons =
-        mapOf(
-            "dept-bagging-pp12" to "🏭",
-            "dept-bagging-pp3" to "🏭",
-            "dept-bagging-ppe" to "🏭",
-            "dept-bagging-ppc" to "🏭",
-            "dept-bagging-hd" to "🏭",
-            "dept-sealroom" to "🚪",
-        )
-    val vehicles = MockData.vehicles
+    // ดึงรถเฉพาะที่ user เข้าถึงได้ (ผ่าน session + repository กลาง)
+    val vehicles by viewModel.vehicles.collectAsState()
     val checkedCount = vehicles.count { it.chassis_no in checkedVehicles }
 
     Scaffold(
@@ -206,7 +194,7 @@ fun VehicleListScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(
-                                        text = "${deptIcons[deptId] ?: "📦"} ${deptNames[deptId] ?: deptId}",
+                                        text = "${DepartmentConstants.deptIcons[deptId] ?: "📦"} ${DepartmentConstants.displayName(deptId)}",
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -225,19 +213,13 @@ fun VehicleListScreen(
                                     )
                                 }
                             }
-                            // Vehicle cards inside
+                            // Vehicle cards inside (แต่ละคันเป็น Card ย่อยแยกชิ้น)
                             list.forEach { v ->
                                 VehicleCard(
                                     v = v,
                                     checkedInfo = checkedVehicles[v.chassis_no],
                                     onClick = { onVehicleClick(v) },
                                 )
-                                if (v != list.last()) {
-                                    Divider(
-                                        modifier = Modifier.padding(horizontal = 16.dp),
-                                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                                    )
-                                }
                             }
                         }
                     }
@@ -258,19 +240,33 @@ fun VehicleCard(
     onClick: () -> Unit,
 ) {
     val isChecked = checkedInfo != null
+    val borderColor =
+        if (isChecked) {
+            Color(0xFF16A34A)
+        } else {
+            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+        }
 
-    Surface(
+    Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        color =
-            if (isChecked) {
-                Color(0xFF16A34A).copy(alpha = 0.04f)
-            } else {
-                Color.Transparent
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 4.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isChecked) {
+                        Color(0xFF16A34A).copy(alpha = 0.07f)
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+            ),
+        border = BorderStroke(1.dp, borderColor),
     ) {
         Row(
-            Modifier.padding(horizontal = 16.dp, vertical = 12.dp).fillMaxWidth(),
+            Modifier.padding(horizontal = 14.dp, vertical = 12.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
@@ -289,7 +285,7 @@ fun VehicleCard(
                     )
                 } else {
                     Text(
-                        "${v.chassis_no} · ${v.vehicle_type}",
+                        "${v.chassis_no} · ${v.model}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

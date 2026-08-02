@@ -1,7 +1,10 @@
 // 📁 core/data/repository/VehicleRepositoryImpl.kt
 package com.irpc.forklift.core.data.repository
 
+import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.core.domain.model.canAccessDepartment
 import com.irpc.forklift.core.domain.repository.VehicleRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,6 +32,18 @@ class VehicleRepositoryImpl
                 // val vehicles = snapshot.documents.map { it.toObject(Vehicle::class.java) }
                 // Result.success(vehicles)
                 Result.failure(Exception("Not implemented"))
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+
+        override suspend fun getAccessibleVehicles(profile: UserProfile): Result<List<Vehicle>> =
+            try {
+                // กรองรถตามสิทธิ์: เห็นเฉพาะแผนกที่ canAccessDepartment == true
+                val accessible =
+                    MockData.vehicles.filter { vehicle ->
+                        profile.canAccessDepartment(vehicle.department_id)
+                    }
+                Result.success(accessible)
             } catch (e: Exception) {
                 Result.failure(e)
             }

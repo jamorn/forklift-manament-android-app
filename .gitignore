@@ -15,3 +15,8 @@
 *.ap_
 *.dex
 local.properties
+
+# เอกสาร/ไฟล์ไม่เกี่ยวกับโค้ดแอป
+/Docs/08-Hardcoded-Text-Map-Firebase.md
+/Docs/json.md
+/Users/

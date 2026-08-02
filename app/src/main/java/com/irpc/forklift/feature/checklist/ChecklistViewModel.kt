@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.core.data.repository.SessionRepository
 import com.irpc.forklift.core.domain.repository.AuthRepository
+import com.irpc.forklift.core.domain.repository.VehicleRepository
 import com.irpc.forklift.core.domain.usecase.checklist.GetPreviousChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.checklist.SubmitChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
@@ -40,6 +42,8 @@ class ChecklistViewModel
         private val submitChecksheet: SubmitChecksheetUseCase,
         private val authRepository: AuthRepository,
         private val getShiftUseCase: GetCurrentShiftUseCase,
+        private val sessionRepository: SessionRepository,
+        private val vehicleRepository: VehicleRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(ChecklistUiState())
         val uiState: StateFlow<ChecklistUiState> = _uiState.asStateFlow()
@@ -62,10 +66,19 @@ class ChecklistViewModel
         }
 
         private fun loadVehicles() {
-            _uiState.value =
-                _uiState.value.copy(
-                    vehicles = MockData.vehicles,
-                )
+            val profile = sessionRepository.getProfile()
+            viewModelScope.launch {
+                val vehicles =
+                    if (profile != null) {
+                        vehicleRepository.getAccessibleVehicles(profile).getOrDefault(emptyList())
+                    } else {
+                        MockData.vehicles
+                    }
+                _uiState.value =
+                    _uiState.value.copy(
+                        vehicles = vehicles,
+                    )
+            }
         }
 
         fun selectVehicle(vehicle: Vehicle) {
@@ -209,6 +222,15 @@ class ChecklistViewModel
         }
 
         fun reset() {
-            _uiState.value = ChecklistUiState(vehicles = MockData.vehicles)
+            val profile = sessionRepository.getProfile()
+            viewModelScope.launch {
+                val vehicles =
+                    if (profile != null) {
+                        vehicleRepository.getAccessibleVehicles(profile).getOrDefault(emptyList())
+                    } else {
+                        MockData.vehicles
+                    }
+                _uiState.value = ChecklistUiState(vehicles = vehicles)
+            }
         }
     }

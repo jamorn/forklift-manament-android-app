@@ -4,6 +4,7 @@ package com.irpc.forklift.feature.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.repository.AuthRepositoryImpl
+import com.irpc.forklift.core.data.repository.SessionRepository
 import com.irpc.forklift.core.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ class LoginViewModel
     @Inject
     constructor(
         private val authRepository: AuthRepository,
+        private val sessionRepository: SessionRepository,
     ) : ViewModel() {
         private val _uiState =
             MutableStateFlow(
@@ -49,6 +51,8 @@ class LoginViewModel
                 val result = authRepository.mockLogin(email)
                 result
                     .onSuccess { profile ->
+                        // เซฟ profile ไว้ใน session (login สำเร็จ) — ให้ทุก VM ใช้ต่อได้
+                        sessionRepository.setProfile(profile)
                         _uiState.value =
                             _uiState.value.copy(
                                 isLoading = false,

@@ -3,6 +3,7 @@ package com.irpc.forklift.core.data.repository
 
 import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.repository.AuthRepository
+import com.irpc.forklift.core.common.constants.DepartmentConstants
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -56,9 +57,9 @@ class AuthRepositoryImpl
             // Mock users data — subset สำหรับ login
             val MOCK_USERS =
                 mapOf(
-                    "jamorn@irpc.co.th" to
+                    "jamorn.irpc@gmail.com" to
                         UserProfile(
-                            email = "jamorn@irpc.co.th",
+                            email = "jamorn.irpc@gmail.com",
                             displayName = "จำเริญ",
                             position = "System Administrator",
                             employmentType = "permanent",
@@ -66,15 +67,15 @@ class AuthRepositoryImpl
                             status = listOf("active"),
                             roles =
                                 com.irpc.forklift.core.domain.model
-                                    .ForkliftRoles(role = "sa", scope = emptyList()),
+                                    .ForkliftRoles(role = "sa", scope = emptyList(), access = DepartmentConstants.ACCESS_ALL),
                             mailto = listOf("maintenance-report", "daily-plan"),
                             createdAt = "2026-01-01T00:00:00Z",
                             lastLoginAt = "2026-08-05T10:00:00Z",
                             lastUpdatedAt = "2026-08-05T10:00:00Z",
                         ),
-                    "supv-pl@irpc.co.th" to
+                    "supv.pl@gmail.com" to
                         UserProfile(
-                            email = "supv-pl@irpc.co.th",
+                            email = "supv.pl@gmail.com",
                             displayName = "สมชาย",
                             position = "Forklift Supervisor",
                             employmentType = "permanent",
@@ -92,15 +93,16 @@ class AuthRepositoryImpl
                                             "dept-bagging-hd",
                                             "dept-sealroom",
                                         ),
+                                    access = DepartmentConstants.BAGGING_PL_ALL,
                                 ),
                             mailto = listOf("maintenance-report", "daily-plan"),
                             createdAt = "2026-02-15T00:00:00Z",
                             lastLoginAt = "2026-08-05T08:30:00Z",
                             lastUpdatedAt = "2026-08-05T08:30:00Z",
                         ),
-                    "wiroj@abc-logistics.co.th" to
+                    "wiroj.pl@gmail.com" to
                         UserProfile(
-                            email = "wiroj@abc-logistics.co.th",
+                            email = "wiroj.pl@gmail.com",
                             displayName = "วิโรจน์ ขยัน",
                             position = "Forklift Driver",
                             employmentType = "contractor",
@@ -118,9 +120,48 @@ class AuthRepositoryImpl
                                             "dept-bagging-hd",
                                             "dept-sealroom",
                                         ),
+                                    access = DepartmentConstants.BAGGING_PL_ALL,
                                 ),
                             mailto = emptyList(),
                             createdAt = "2026-03-10T00:00:00Z",
+                            lastLoginAt = "2026-08-05T06:00:00Z",
+                            lastUpdatedAt = "2026-08-05T06:00:00Z",
+                        ),
+                    "supv.sasb@gmail.com" to
+                        UserProfile(
+                            email = "supv.sasb@gmail.com",
+                            displayName = "สมปอง",
+                            position = "Forklift Supervisor",
+                            employmentType = "permanent",
+                            companyName = "IRPC",
+                            status = listOf("active"),
+                            roles =
+                                com.irpc.forklift.core.domain.model.ForkliftRoles(
+                                    role = "admin",
+                                    scope = listOf("dept-bagging-sasb"),
+                                    access = DepartmentConstants.BAGGING_SASB_ALL,
+                                ),
+                            mailto = listOf("maintenance-report", "daily-plan"),
+                            createdAt = "2026-04-01T00:00:00Z",
+                            lastLoginAt = "2026-08-05T08:00:00Z",
+                            lastUpdatedAt = "2026-08-05T08:00:00Z",
+                        ),
+                    "op.sasb@gmail.com" to
+                        UserProfile(
+                            email = "op.sasb@gmail.com",
+                            displayName = "สมหวัง",
+                            position = "Forklift Driver",
+                            employmentType = "contractor",
+                            companyName = "ABC Logistics",
+                            status = listOf("active"),
+                            roles =
+                                com.irpc.forklift.core.domain.model.ForkliftRoles(
+                                    role = "operator",
+                                    scope = listOf("dept-bagging-sasb"),
+                                    access = DepartmentConstants.BAGGING_SASB_ALL,
+                                ),
+                            mailto = emptyList(),
+                            createdAt = "2026-04-10T00:00:00Z",
                             lastLoginAt = "2026-08-05T06:00:00Z",
                             lastUpdatedAt = "2026-08-05T06:00:00Z",
                         ),

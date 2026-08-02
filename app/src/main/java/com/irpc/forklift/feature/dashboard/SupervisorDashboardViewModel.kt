@@ -4,6 +4,7 @@ package com.irpc.forklift.feature.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.data.repository.SessionRepository
 import com.irpc.forklift.core.domain.repository.ChecksheetRepository
 import com.irpc.forklift.core.domain.repository.VehicleRepository
 import com.irpc.forklift.core.domain.usecase.department.GetAccessibleDepartmentsUseCase
@@ -30,6 +31,7 @@ class SupervisorDashboardViewModel
         private val getAccessibleDepts: GetAccessibleDepartmentsUseCase,
         private val vehicleRepository: VehicleRepository,
         private val checksheetRepository: ChecksheetRepository,
+        private val sessionRepository: SessionRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(DashboardUiState())
         val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
@@ -46,8 +48,14 @@ class SupervisorDashboardViewModel
                     // ตารางเวรวันนี้ (ทุกทีม)
                     val todayShifts = getShiftUseCase.getTodayShifts()
 
-                    // Use mock vehicles for now (replace with real repo call)
-                    val vehicles = MockData.vehicles
+                    // ใช้ profile ปัจจุบัน + กรองรถตามสิทธิ์ (เห็นเฉพาะโซนของตน)
+                    val profile = sessionRepository.getProfile()
+                    val vehicles =
+                        if (profile != null) {
+                            vehicleRepository.getAccessibleVehicles(profile).getOrDefault(emptyList())
+                        } else {
+                            MockData.vehicles
+                        }
                     val activeVehicles = vehicles.filter { it.is_active }
 
                     // Mock: simulate some checked vehicles

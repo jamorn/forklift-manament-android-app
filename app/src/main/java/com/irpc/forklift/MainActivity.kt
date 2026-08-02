@@ -1,3 +1,4 @@
+// MainActivity.kt
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 @file:Suppress("ktlint:standard:no-wildcard-imports")
@@ -16,10 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.irpc.forklift.core.common.utils.DateUtils
 import com.irpc.forklift.core.data.local.CheckedVehicleStore
+import kotlinx.coroutines.launch
 import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.ShiftCode
+import com.irpc.forklift.core.common.constants.DepartmentConstants
 import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.core.domain.repository.VehicleRepository
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.irpc.forklift.feature.auth.LoginScreen
@@ -40,12 +44,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var checkedVehicleStore: CheckedVehicleStore
 
+    @Inject
+    lateinit var vehicleRepository: VehicleRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ForkliftTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    AppRoot(checkedVehicleStore = checkedVehicleStore)
+                    AppRoot(
+                        checkedVehicleStore = checkedVehicleStore,
+                        vehicleRepository = vehicleRepository,
+                    )
                 }
             }
         }
@@ -54,7 +64,10 @@ class MainActivity : ComponentActivity() {
 
 // ============ ROOT NAV ============
 @Composable
-fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
+fun AppRoot(
+    checkedVehicleStore: CheckedVehicleStore,
+    vehicleRepository: VehicleRepository,
+) {
     var screen by remember { mutableStateOf("login") }
     var profile by remember { mutableStateOf<UserProfile?>(null) }
     var selectedV by remember { mutableStateOf<Vehicle?>(null) }
@@ -78,6 +91,9 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
     val canAccessMenu: Boolean = profile?.roles?.role in listOf("sa", "admin", "super")
     // ViewModel scope ระดับ Activity — อยู่รอดผ่าน screen change
     val loginViewModel: LoginViewModel = hiltViewModel()
+
+    // Coroutine scope ระดับ composable — ใช้สำหรับ async ที่ไม่บล็อก UI (เช่น find vehicle จาก repo)
+    val scope = rememberCoroutineScope()
 
     // ออกจากระบบ — reset กลับหน้า login เต็มตัว (ไม่มี state ค้าง)
     val logout: () -> Unit = {
@@ -125,10 +141,22 @@ fun AppRoot(checkedVehicleStore: CheckedVehicleStore) {
         "scan" ->
             ScannerScreen(
                 onVehicleScanned = { chassisNo ->
-                    val found = MockData.vehicles.firstOrNull { it.chassis_no == chassisNo }
-                    if (found != null) {
-                        selectedV = found
-                        screen = "checklist"
+                    scope.launch {
+                        // ใช้ profile ปัจจุบัน + repository กลาง — เห็นเฉพาะรถที่ตนเข้าถึงได้
+                        val currentProfile = profile // capture local value (หลีกเลี่ยง smart-cast error จาก mutableState)
+                        val found =
+                            if (currentProfile != null) {
+                                vehicleRepository
+                                    .getAccessibleVehicles(currentProfile)
+                                    .getOrDefault(emptyList())
+                                    .firstOrNull { it.chassis_no == chassisNo }
+                            } else {
+                                null
+                            }
+                        if (found != null) {
+                            selectedV = found
+                            screen = "checklist"
+                        }
                     }
                 },
                 onBack = { screen = "vehicles" },

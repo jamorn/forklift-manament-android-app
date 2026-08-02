@@ -1,9 +1,13 @@
+// feature/scan/ScanViewModel.kt
 package com.irpc.forklift.feature.scan
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.irpc.forklift.core.data.mock.MockData
+import androidx.lifecycle.viewModelScope
+import com.irpc.forklift.core.data.repository.SessionRepository
+import com.irpc.forklift.core.domain.repository.VehicleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +19,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ScanViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        private val sessionRepository: SessionRepository,
+        private val vehicleRepository: VehicleRepository,
+    ) : ViewModel() {
         private val _uiState = MutableStateFlow(ScanUiState())
         val uiState: StateFlow<ScanUiState> = _uiState.asStateFlow()
 
@@ -31,24 +38,36 @@ class ScanViewModel
             Log.d("ScanVM", "QR scanned at: $now — chassis: $code")
 
             val trimmedCode = code.trim()
-            val vehicle =
-                MockData.vehicles.firstOrNull { v ->
-                    v.chassis_no.equals(trimmedCode, ignoreCase = true)
-                }
+            val profile = sessionRepository.getProfile()
 
-            if (vehicle != null) {
-                _uiState.value =
-                    _uiState.value.copy(
-                        isScanning = false,
-                        scannedCode = trimmedCode,
-                        matchedVehicle = vehicle,
-                    )
-            } else {
-                _uiState.value =
-                    _uiState.value.copy(
-                        isScanning = false,
-                        error = "ไม่พบรถในระบบ (chassis: $trimmedCode)",
-                    )
+            // ใช้ coroutine เพราะ repo เป็น suspend — กรองตามสิทธิ์ (เห็นเฉพาะรถที่ตนเข้าถึงได้)
+            viewModelScope.launch {
+                val accessibleVehicles =
+                    if (profile != null) {
+                        vehicleRepository.getAccessibleVehicles(profile).getOrDefault(emptyList())
+                    } else {
+                        emptyList()
+                    }
+
+                val vehicle =
+                    accessibleVehicles.firstOrNull { v ->
+                        v.chassis_no.equals(trimmedCode, ignoreCase = true)
+                    }
+
+                if (vehicle != null) {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isScanning = false,
+                            scannedCode = trimmedCode,
+                            matchedVehicle = vehicle,
+                        )
+                } else {
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isScanning = false,
+                            error = "ไม่พบรถในระบบ (chassis: $trimmedCode)",
+                        )
+                }
             }
         }
 

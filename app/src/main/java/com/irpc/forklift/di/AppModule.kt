@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.irpc.forklift.core.data.repository.AuthRepositoryImpl
 import com.irpc.forklift.core.data.repository.ChecksheetRepositoryImpl
 import com.irpc.forklift.core.data.repository.DepartmentRepositoryImpl
+import com.irpc.forklift.core.data.repository.SessionRepository
 import com.irpc.forklift.core.data.repository.VehicleRepositoryImpl
 import com.irpc.forklift.core.domain.repository.AuthRepository
 import com.irpc.forklift.core.domain.repository.ChecksheetRepository
@@ -44,6 +45,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideVehicleRepository(): VehicleRepository = VehicleRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideSessionRepository(): SessionRepository = SessionRepository()
 
     @Provides
     @Singleton
