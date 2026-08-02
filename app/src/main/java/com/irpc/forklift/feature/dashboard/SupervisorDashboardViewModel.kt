@@ -4,9 +4,8 @@ package com.irpc.forklift.feature.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.mock.MockData
-import com.irpc.forklift.core.data.repository.SessionRepository
-import com.irpc.forklift.core.domain.repository.ChecksheetRepository
-import com.irpc.forklift.core.domain.repository.VehicleRepository
+import com.irpc.forklift.core.data.repository.*
+import com.irpc.forklift.core.domain.repository.*
 import com.irpc.forklift.core.domain.usecase.department.GetAccessibleDepartmentsUseCase
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

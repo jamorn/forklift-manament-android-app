@@ -1,4 +1,4 @@
-// MainActivity.kt
+// MainActivity.ktDocs/08-...md, Docs/json.md, Users/
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 @file:Suppress("ktlint:standard:no-wildcard-imports")
@@ -23,7 +23,7 @@ import com.irpc.forklift.core.domain.model.ShiftCode
 import com.irpc.forklift.core.common.constants.DepartmentConstants
 import com.irpc.forklift.core.domain.model.UserProfile
 import com.irpc.forklift.core.domain.model.Vehicle
-import com.irpc.forklift.core.domain.repository.VehicleRepository
+import com.irpc.forklift.core.domain.repository.*
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.irpc.forklift.feature.auth.LoginScreen

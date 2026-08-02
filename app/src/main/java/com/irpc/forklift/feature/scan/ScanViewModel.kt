@@ -4,8 +4,8 @@ package com.irpc.forklift.feature.scan
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.irpc.forklift.core.data.repository.SessionRepository
-import com.irpc.forklift.core.domain.repository.VehicleRepository
+import com.irpc.forklift.core.data.repository.*
+import com.irpc.forklift.core.domain.repository.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow

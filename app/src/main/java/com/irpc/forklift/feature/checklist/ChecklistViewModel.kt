@@ -7,9 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.irpc.forklift.core.data.mock.MockData
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import com.irpc.forklift.core.domain.model.Vehicle
-import com.irpc.forklift.core.data.repository.SessionRepository
-import com.irpc.forklift.core.domain.repository.AuthRepository
-import com.irpc.forklift.core.domain.repository.VehicleRepository
+import com.irpc.forklift.core.data.repository.*
+import com.irpc.forklift.core.domain.repository.*
 import com.irpc.forklift.core.domain.usecase.checklist.GetPreviousChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.checklist.SubmitChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase

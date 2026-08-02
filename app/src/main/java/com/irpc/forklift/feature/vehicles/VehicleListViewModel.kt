@@ -3,9 +3,9 @@ package com.irpc.forklift.feature.vehicles
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.irpc.forklift.core.data.repository.SessionRepository
+import com.irpc.forklift.core.data.repository.*
 import com.irpc.forklift.core.domain.model.Vehicle
-import com.irpc.forklift.core.domain.repository.VehicleRepository
+import com.irpc.forklift.core.domain.repository.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
