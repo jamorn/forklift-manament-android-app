@@ -51,7 +51,9 @@ class ScanViewModel
 
                 val vehicle =
                     accessibleVehicles.firstOrNull { v ->
-                        v.chassis_no.equals(trimmedCode, ignoreCase = true)
+                        // QR ที่แปะบนรถ encode FL No. (PLBG-01) — แต่รองรับ chassis_no ด้วย
+                        v.current_flno.equals(trimmedCode, ignoreCase = true) ||
+                            v.chassis_no.equals(trimmedCode, ignoreCase = true)
                     }
 
                 if (vehicle != null) {

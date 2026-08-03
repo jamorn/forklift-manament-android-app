@@ -44,6 +44,10 @@ fun ChecklistForm(
                 shift = previousChecksheet.shift,
             )
             Spacer(Modifier.height(12.dp))
+        } else {
+            // กะก่อนหน้าไม่ได้ตรวจ (query firebase ไม่เจอ doc) — Doc 18
+            NoPreviousChecksheetNotice()
+            Spacer(Modifier.height(12.dp))
         }
 
         // PASS All Button

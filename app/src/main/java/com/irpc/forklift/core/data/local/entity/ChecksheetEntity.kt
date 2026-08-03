@@ -21,6 +21,7 @@ data class ChecksheetEntity(
     val manhourMeter: String = "",
     val status: String = "normal",
     val created_at: String = "",
+    val updated_at: String = "",
     val synced: Boolean = false,
 )
 
@@ -39,4 +40,5 @@ fun ChecksheetEntity.toDomain(): DailyChecksheet =
         manhourMeter = manhourMeter,
         status = status,
         created_at = created_at,
+        updated_at = updated_at,
     )

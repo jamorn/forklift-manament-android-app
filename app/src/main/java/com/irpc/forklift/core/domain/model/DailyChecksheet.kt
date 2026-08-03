@@ -18,6 +18,7 @@ data class DailyChecksheet(
     val manhourMeter: String,
     val status: String, // "normal" | "unsafe"
     val created_at: String,
+    val updated_at: String = "",
 )
 
 /** Helpers */

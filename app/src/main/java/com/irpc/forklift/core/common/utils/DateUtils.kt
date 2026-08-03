@@ -61,5 +61,13 @@ object DateUtils {
     /** resolveChecklistDateString(): วันทำงานของกะ แบบ yyyy-MM-dd (ใช้เป็น key/บันทึก) */
     fun getWorkDateString(now: ZonedDateTime = ZonedDateTime.now(BANGKOK_ZONE)): String =
         getWorkDate(now).format(dbFormat)
+
+    // ──────────────────────────────────────────────────────────────
+    //  TIMESTAMP (ISO 8601 +07:00) — created_at / updated_at (Doc 16)
+    // ──────────────────────────────────────────────────────────────
+
+    /** รูปแบบ timestamp แบบ ISO 8601 พร้อม timezone +07:00 (Asia/Bangkok) */
+    fun getNowIsoString(): String =
+        ZonedDateTime.now(BANGKOK_ZONE).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z"))
 }
 

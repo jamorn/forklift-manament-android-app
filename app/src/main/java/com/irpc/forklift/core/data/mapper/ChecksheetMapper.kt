@@ -24,6 +24,7 @@ object ChecksheetMapper {
             manhourMeter = entity.manhourMeter,
             status = entity.status,
             created_at = entity.created_at,
+            updated_at = entity.updated_at,
         )
 
     fun domainToEntity(
@@ -42,6 +43,7 @@ object ChecksheetMapper {
             manhourMeter = domain.manhourMeter,
             status = domain.status,
             created_at = domain.created_at,
+            updated_at = domain.updated_at,
             synced = synced,
         )
 

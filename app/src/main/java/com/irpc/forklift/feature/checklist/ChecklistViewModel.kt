@@ -186,6 +186,8 @@ class ChecklistViewModel
                 // กะตามช่วงเวลาปัจจุบัน (ไม่ใช้ hardcode "M") — รองรับ OT ควบกะ
                 val currentShift = getShiftUseCase.getShiftByTime()
                 val operator = state.currentUser ?: "unknown"
+                // timestamp ISO 8601 +07:00 (ครั้งแรก: updated_at = created_at)
+                val nowIso = DateUtils.getNowIsoString()
 
                 val checksheet =
                     DailyChecksheet(
@@ -200,7 +202,8 @@ class ChecklistViewModel
                         main_remark = state.mainRemark,
                         manhourMeter = state.manhourMeter,
                         status = if (state.checkResults.any { it.value == "fail" }) "unsafe" else "normal",
-                        created_at = "",
+                        created_at = nowIso,
+                        updated_at = nowIso,
                     )
 
                 val result = submitChecksheet.invoke(checksheet)

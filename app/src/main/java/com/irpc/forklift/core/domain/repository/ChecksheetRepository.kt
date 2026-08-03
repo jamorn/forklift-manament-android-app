@@ -14,11 +14,11 @@ interface ChecksheetRepository {
         vehicleIds: List<String>,
     ): Result<List<DailyChecksheet>>
 
-    /** ดึง checksheet ก่อนหน้า (สำหรับ Copy-Forward) */
+    /** ดึง checksheet ก่อนหน้า (สำหรับ Copy-Forward) — ถามหาด้วย prevDate + prevShift ที่คำนวณแล้ว */
     suspend fun getPreviousChecksheet(
         chassisNo: String,
-        currentDate: String,
-        currentShift: String,
+        prevDate: String,
+        prevShift: String,
     ): Result<DailyChecksheet?>
 
     /** บันทึก checksheet (Firestore + Offline cache) */

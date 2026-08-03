@@ -41,10 +41,20 @@ class ChecksheetRepositoryImpl
 
         override suspend fun getPreviousChecksheet(
             chassisNo: String,
-            currentDate: String,
-            currentShift: String,
+            prevDate: String,
+            prevShift: String,
         ): Result<DailyChecksheet?> {
-            // TODO: query checksheet ก่อนหน้า ของรถคันนี้
+            // TODO(implement): เปิด firestore query เมื่อผูก Firestore จริง
+            // val snapshot = firestore
+            //     .collection(AppConstants.COLLECTION_CHECKSHEETS)
+            //     .whereEqualTo("chassis_no", chassisNo)
+            //     .whereEqualTo("date", prevDate)
+            //     .whereEqualTo("shift", prevShift)
+            //     .limit(1)
+            //     .get()
+            //     .await()
+            // val doc = snapshot.documents.firstOrNull()
+            // val sheet = doc?.toObject(DailyChecksheet::class.java)
             return Result.success(null)
         }
 
