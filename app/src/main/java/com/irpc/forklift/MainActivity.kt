@@ -76,7 +76,8 @@ fun AppRoot(
     val shiftUseCase = remember { GetCurrentShiftUseCase() }
     val todayShifts = remember { shiftUseCase.getTodayShifts() }
     val currentShift = remember { shiftUseCase.getShiftByTime() }
-    val todayStr = DateUtils.getTodayString()
+    // work date (วันทำงานของกะ — ก่อน 06:00 เป็นของเมื่อวาน) ใช้เป็น key ของรถที่ตรวจแล้ว
+    val todayStr = DateUtils.getWorkDateString()
 
     // ติดตามรถที่ตรวจแล้วในวันนี้ — persist ลง SharedPreferences (ผ่าน CheckedVehicleStore)
     // โหลดจาก store ตอนแรก (data เดิมที่เคยบันทึก) → state ไว้ reactive

@@ -12,13 +12,12 @@ import com.irpc.forklift.core.domain.repository.*
 import com.irpc.forklift.core.domain.usecase.checklist.GetPreviousChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.checklist.SubmitChecksheetUseCase
 import com.irpc.forklift.core.domain.usecase.shift.GetCurrentShiftUseCase
+import com.irpc.forklift.core.common.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 /**
@@ -89,7 +88,8 @@ class ChecklistViewModel
                 )
 
             viewModelScope.launch {
-                val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+                // work date (วันทำงานของกะ — ก่อน 06:00 เป็นของเมื่อวาน) ใช้ค้นหา Copy-Forward
+                val today = DateUtils.getWorkDateString()
                 // กะตามช่วงเวลาปัจจุบัน — ใช้ค้นหา Copy-Forward จากกะเดียวกัน
                 val currentShift = getShiftUseCase.getShiftByTime().name
                 val result =
@@ -181,7 +181,8 @@ class ChecklistViewModel
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(isLoading = true)
 
-                val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+                // work date (วันทำงานของกะ — ก่อน 06:00 เป็นของเมื่อวาน) ใช้บันทึกลง DailyChecksheet
+                val today = DateUtils.getWorkDateString()
                 // กะตามช่วงเวลาปัจจุบัน (ไม่ใช้ hardcode "M") — รองรับ OT ควบกะ
                 val currentShift = getShiftUseCase.getShiftByTime()
                 val operator = state.currentUser ?: "unknown"
