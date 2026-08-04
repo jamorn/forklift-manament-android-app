@@ -22,19 +22,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.irpc.forklift.core.data.mock.MockData.ChecklistItem
+import com.irpc.forklift.core.domain.model.CheckingPoint
 
+/**
+ * 📋 Check Item Row — หนึ่งรายการตรวจ (checking_point) ตาม redesign
+ *
+ * - result เป็น boolean: `null`=ยังไม่เลือก, `true`=ปกติ, `false`=ชำรุด
+ * - เลือก "ปกติ (✓)" หรือ "ชำรุด (✗)"
+ * - ชำรุด → ต้องกรอก remark (ระบุปัญหา)
+ *
+ * ⭐ เรื่องเลขลำดับ (index) ที่แสดงด้านซ้าย:
+ * - ใช้ **index = 1..N** เรียงตามลำดับภายใน component (ส่งมาจาก CategorySection = idx+1)
+ *   **ไม่ใช้ `point.no`** เพราะ no เป็น Step 10 (10,20,30...) ที่ internal/backend ใช้
+ *   เป็น identity ของ item (key "<comp>-<no>") — user ควรเห็นเลขเรียง 1,2,3.. ง่ายต่อการนับ
+ *   เช่น ระบบเครื่องยนต์ มี 11 item → แสดง 1..11 (ไม่ใช่ 10,20,30...110)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckItemRow(
     index: Int,
-    item: ChecklistItem,
-    result: String?,
+    point: CheckingPoint,
+    result: Boolean?,
     remark: String,
-    onChecked: (String) -> Unit,
+    onChecked: (Boolean) -> Unit,
     onRemark: (String) -> Unit,
 ) {
-    val isFail = result == "fail"
+    val isFail = result == false
 
     Column(
         modifier =
@@ -46,7 +59,9 @@ fun CheckItemRow(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // หมายเลขลำดับ (index+1) — บอกว่ามีทั้งหมดกี่ items ในหมวดนี้
+            // ลำดับที่เห็น = index 1..N (เรียงภายในหมวด) — ไม่ใช้ point.no (Step 10)
+            // เหตุผล: เลข 10,20,30 ตอนแสดงงง / นับยาก → user ควรเห็น 1,2,3...
+            // (index ส่งมาจาก CategorySection ด้วย idx+1)
             Text(
                 text = "$index",
                 style = MaterialTheme.typography.bodyMedium,
@@ -55,7 +70,7 @@ fun CheckItemRow(
                 modifier = Modifier.padding(end = 12.dp),
             )
             Text(
-                text = item.label,
+                text = point.item_th,
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium,
                 color =
@@ -67,8 +82,8 @@ fun CheckItemRow(
             )
             Row {
                 FilterChip(
-                    selected = result == "pass",
-                    onClick = { onChecked("pass") },
+                    selected = result == true,
+                    onClick = { onChecked(true) },
                     label = { Text("✓") },
                     colors =
                         FilterChipDefaults.filterChipColors(
@@ -79,7 +94,7 @@ fun CheckItemRow(
                 Spacer(Modifier.width(4.dp))
                 FilterChip(
                     selected = isFail,
-                    onClick = { onChecked("fail") },
+                    onClick = { onChecked(false) },
                     label = { Text("✗") },
                     colors =
                         FilterChipDefaults.filterChipColors(

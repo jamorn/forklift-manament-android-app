@@ -2,6 +2,7 @@
 package com.irpc.forklift.core.data.mapper
 
 import com.irpc.forklift.core.data.local.entity.ChecksheetEntity
+import com.irpc.forklift.core.domain.model.ChecksheetStatus
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import org.json.JSONObject
 
@@ -18,11 +19,11 @@ object ChecksheetMapper {
             chassis_no = entity.chassis_no,
             flno_at_time = entity.flno_at_time,
             operator_uid = entity.operator_uid,
-            results = parseMap(entity.results_json),
-            remarks = parseMap(entity.remarks_json),
+            results = parseBooleanMap(entity.results_json),
+            remarks = parseStringMap(entity.remarks_json),
             main_remark = entity.main_remark,
             manhourMeter = entity.manhourMeter,
-            status = entity.status,
+            status = ChecksheetStatus.fromValue(entity.status) ?: ChecksheetStatus.NORMAL,
             created_at = entity.created_at,
             updated_at = entity.updated_at,
         )
@@ -41,17 +42,23 @@ object ChecksheetMapper {
             remarks_json = toJson(domain.remarks),
             main_remark = domain.main_remark,
             manhourMeter = domain.manhourMeter,
-            status = domain.status,
+            status = domain.status.value,
             created_at = domain.created_at,
             updated_at = domain.updated_at,
             synced = synced,
         )
 
-    private fun parseMap(json: String): Map<String, String> {
+    private fun parseBooleanMap(json: String): Map<String, Boolean> {
         if (json.isBlank()) return emptyMap()
         val obj = JSONObject(json)
-        return obj.keys().asSequence().associateWith { obj.getString(it) }
+        return obj.keys().asSequence().associateWith { key -> obj.optBoolean(key) }
     }
 
-    private fun toJson(map: Map<String, String>): String = JSONObject(map as Map<String, Any?>).toString()
+    private fun parseStringMap(json: String): Map<String, String> {
+        if (json.isBlank()) return emptyMap()
+        val obj = JSONObject(json)
+        return obj.keys().asSequence().associateWith { obj.optString(it) }
+    }
+
+    private fun toJson(map: Map<String, Any?>): String = JSONObject(map).toString()
 }

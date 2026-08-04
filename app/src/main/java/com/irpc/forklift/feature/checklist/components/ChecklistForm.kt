@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.data.mock.MockChecklistMaster
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import com.irpc.forklift.core.domain.model.Vehicle
 import com.irpc.forklift.feature.checklist.components.CategorySection.CategorySection
@@ -17,13 +17,13 @@ import com.irpc.forklift.feature.checklist.components.ManhourMeterInput.ManhourM
 
 @Composable
 fun ChecklistForm(
-    vehicle: Vehicle,
+    @Suppress("unused") vehicle: Vehicle,
     previousChecksheet: DailyChecksheet?,
-    results: Map<String, String>,
+    results: Map<String, Boolean>,
     remarks: Map<String, String>,
     mainRemark: String,
     manhourMeter: String,
-    onItemChecked: (String, String) -> Unit,
+    onItemChecked: (String, Boolean) -> Unit,
     onItemRemark: (String, String) -> Unit,
     onMainRemarkChange: (String) -> Unit,
     onManhourMeterChange: (String) -> Unit,
@@ -61,13 +61,14 @@ fun ChecklistForm(
 
         Spacer(Modifier.height(12.dp))
 
-        // Category Sections
-        MockData.categories.forEach { category ->
-            val catItems = MockData.checklistItems.filter { it.category == category }
-            if (catItems.isNotEmpty()) {
+        // Component Sections (ตาม Master ใหม่ — ทุก component ที่ is_active)
+        // ตามข้อตกลง: ยังไม่กรองตามแผนก (DepartmentChecklistConfig เอาไว้ทีหลัง)
+        MockChecklistMaster.activeComponents.forEach { component ->
+            val points = component.checking_points.filter { it.is_active }
+            if (points.isNotEmpty()) {
                 CategorySection(
-                    title = category,
-                    items = catItems,
+                    component = component,
+                    points = points,
                     results = results,
                     remarks = remarks,
                     onItemChecked = onItemChecked,

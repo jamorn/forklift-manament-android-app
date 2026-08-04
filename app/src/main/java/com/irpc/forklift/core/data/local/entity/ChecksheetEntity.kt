@@ -1,6 +1,6 @@
-// 📁 core/data/local/entity/ChecksheetEntity.kt
 package com.irpc.forklift.core.data.local.entity
 
+import com.irpc.forklift.core.domain.model.ChecksheetStatus
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 
 /**
@@ -38,7 +38,8 @@ fun ChecksheetEntity.toDomain(): DailyChecksheet =
         remarks = emptyMap(),
         main_remark = main_remark,
         manhourMeter = manhourMeter,
-        status = status,
+        status = ChecksheetStatus.fromValue(status) ?: ChecksheetStatus.NORMAL,
         created_at = created_at,
         updated_at = updated_at,
     )
+

@@ -97,11 +97,32 @@ fun ChecklistScreen(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (uiState.step) {
-                1 ->
-                    VehicleSelector(
-                        vehicles = uiState.vehicles,
-                        onVehicleSelected = { vehicle -> viewModel.selectVehicle(vehicle) },
-                    )
+                // ถ้ามี initialVehicle (จาก MainActivity คลิกที่รถ) → ไป form เลย
+                // ไม่รอ LaunchedEffect ตั้ง step=2 -> กันแว็บ VehicleSelector ตอน first frame
+                1 -> {
+                    val target = initialVehicle ?: uiState.selectedVehicle
+                    if (target == null) {
+                        VehicleSelector(
+                            vehicles = uiState.vehicles,
+                            onVehicleSelected = { vehicle -> viewModel.selectVehicle(vehicle) },
+                        )
+                    } else {
+                        ChecklistForm(
+                            vehicle = target,
+                            previousChecksheet = uiState.previousChecksheet,
+                            results = uiState.checkResults,
+                            remarks = uiState.remarks,
+                            mainRemark = uiState.mainRemark,
+                            manhourMeter = uiState.manhourMeter,
+                            onItemChecked = { itemId, result -> viewModel.checkItem(itemId, result) },
+                            onItemRemark = { itemId, remark -> viewModel.remarkItem(itemId, remark) },
+                            onMainRemarkChange = { viewModel.setMainRemark(it) },
+                            onManhourMeterChange = { viewModel.setManhourMeter(it) },
+                            onPassAll = { viewModel.passAllItems() },
+                            onSubmit = { viewModel.submitChecksheet() },
+                        )
+                    }
+                }
                 2 ->
                     uiState.selectedVehicle?.let { vehicle ->
                         ChecklistForm(

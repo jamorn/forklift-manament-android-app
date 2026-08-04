@@ -15,6 +15,8 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import com.irpc.forklift.core.common.utils.DateUtils
 import com.irpc.forklift.core.data.local.CheckedVehicleStore
 import kotlinx.coroutines.launch
@@ -89,6 +91,9 @@ fun AppRoot(
         }
 
     val isOperator: Boolean = profile?.roles?.role == "operator"
+    // สิทธิ์เข้าหน้า menu/back-office (sa/admin/super) — เก็บไว้สำหรับ guard ในอนาคต
+    // (ตอนนี้ยังไม่ผูกใช้ แต่ compiler อย่าเตือน เพราะต้องใช้แน่นอนอีกครั้ง — ดู Docs/15)
+    @Suppress("unused")
     val canAccessMenu: Boolean = profile?.roles?.role in listOf("sa", "admin", "super")
     // ViewModel scope ระดับ Activity — อยู่รอดผ่าน screen change
     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -105,75 +110,87 @@ fun AppRoot(
         screen = "login"
     }
 
-    when (screen) {
-        "login" ->
-            LoginScreen(
-                viewModel = loginViewModel,
-                onLoginSuccess = { p ->
-                    profile = p
-                    screen = if (p.roles.role == "operator") "vehicles" else "menu"
-                },
-            )
-        "menu" ->
-            MainMenuScreen(
-                onGoChecklist = { screen = "vehicles" },
-                onGoDashboard = { screen = "dashboard" },
-                onGoMaintenance = { screen = "maintenance" },
-                onGoReport = { screen = "report" },
-            )
-        "vehicles" ->
-            VehicleListScreen(
-                todayShifts = todayShifts,
-                currentShift = currentShift,
-                checkedVehicles = checkedVehicles,
-                isOperator = isOperator,
-                onVehicleClick = { v ->
-                    selectedV = v
-                    screen = "checklist"
-                },
-                onScan = { screen = "scan" },
-                onBack = {
-                    screen = if (isOperator) "login" else "menu"
-                },
-                onLogout = {
-                    logout()
-                },
-            )
-        "scan" ->
-            ScannerScreen(
-                onVehicleScanned = { chassisNo ->
-                    scope.launch {
-                        // ใช้ profile ปัจจุบัน + repository กลาง — เห็นเฉพาะรถที่ตนเข้าถึงได้
-                        val currentProfile = profile // capture local value (หลีกเลี่ยง smart-cast error จาก mutableState)
-                        val found =
-                            if (currentProfile != null) {
-                                vehicleRepository
-                                    .getAccessibleVehicles(currentProfile)
-                                    .getOrDefault(emptyList())
-                                    .firstOrNull { it.chassis_no == chassisNo }
-                            } else {
-                                null
+    // ============ SCREEN TRANSITION (Root Navigation) ============
+    // ใช้ AnimatedContent เปลี่ยน scene แบบ fade เพื่อให้การเปลี่ยนหน้า smooth (ไม่กระตุก/tกดภาพ)
+    // targetState = screen (ชื่อหน้า) → เมื่อ screen เปลี่ยน จะค่อยๆ blend หน้าละหน้ากัน
+    AnimatedContent(
+        targetState = screen,
+        transitionSpec = {
+            // fade เข้า-ออก (tween 250ms) — smooth สม่ำเสมอทุกทิศทาง ไม่ต้อง track back/forward
+            (fadeIn(animationSpec = tween(220)) togetherWith fadeOut(animationSpec = tween(160)))
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) { currentScreen ->
+        when (currentScreen) {
+            "login" ->
+                LoginScreen(
+                    viewModel = loginViewModel,
+                    onLoginSuccess = { p ->
+                        profile = p
+                        screen = if (p.roles.role == "operator") "vehicles" else "menu"
+                    },
+                )
+            "menu" ->
+                MainMenuScreen(
+                    onGoChecklist = { screen = "vehicles" },
+                    onGoDashboard = { screen = "dashboard" },
+                    onGoMaintenance = { screen = "maintenance" },
+                    onGoReport = { screen = "report" },
+                )
+            "vehicles" ->
+                VehicleListScreen(
+                    todayShifts = todayShifts,
+                    currentShift = currentShift,
+                    checkedVehicles = checkedVehicles,
+                    isOperator = isOperator,
+                    onVehicleClick = { v ->
+                        selectedV = v
+                        screen = "checklist"
+                    },
+                    onScan = { screen = "scan" },
+                    onBack = {
+                        screen = if (isOperator) "login" else "menu"
+                    },
+                    onLogout = {
+                        logout()
+                    },
+                )
+            "scan" ->
+                ScannerScreen(
+                    onVehicleScanned = { chassisNo ->
+                        scope.launch {
+                            // ใช้ profile ปัจจุบัน + repository กลาง — เห็นเฉพาะรถที่ตนเข้าถึงได้
+                            val currentProfile = profile // capture local value (หลีกเลี่ยง smart-cast error จาก mutableState)
+                            val found =
+                                if (currentProfile != null) {
+                                    vehicleRepository
+                                        .getAccessibleVehicles(currentProfile)
+                                        .getOrDefault(emptyList())
+                                        .firstOrNull { it.chassis_no == chassisNo }
+                                } else {
+                                    null
+                                }
+                            if (found != null) {
+                                selectedV = found
+                                screen = "checklist"
                             }
-                        if (found != null) {
-                            selectedV = found
-                            screen = "checklist"
                         }
-                    }
-                },
-                onBack = { screen = "vehicles" },
-            )
-        "checklist" ->
-            NewChecklistScreen(
-                initialVehicle = selectedV,
-                onBack = { screen = "vehicles" },
-                onChecklistSaved = { chassisNo, info ->
-                    // อัปเดต state (reactive) + persist ลง SharedPreferences
-                    checkedVehicles[chassisNo] = info
-                    checkedVehicleStore.setCheckedVehicle(todayStr, chassisNo, info)
-                },
-            )
-        "dashboard" -> SupervisorDashboardScreen(onBack = { screen = "menu" })
-        "maintenance" -> MaintenanceScreen(onBack = { screen = "menu" })
-        "report" -> ReportScreen(onBack = { screen = "menu" })
+                    },
+                    onBack = { screen = "vehicles" },
+                )
+            "checklist" ->
+                NewChecklistScreen(
+                    initialVehicle = selectedV,
+                    onBack = { screen = "vehicles" },
+                    onChecklistSaved = { chassisNo, info ->
+                        // อัปเดต state (reactive) + persist ลง SharedPreferences
+                        checkedVehicles[chassisNo] = info
+                        checkedVehicleStore.setCheckedVehicle(todayStr, chassisNo, info)
+                    },
+                )
+            "dashboard" -> SupervisorDashboardScreen(onBack = { screen = "menu" })
+            "maintenance" -> MaintenanceScreen(onBack = { screen = "menu" })
+            "report" -> ReportScreen(onBack = { screen = "menu" })
+        }
     }
 }

@@ -14,7 +14,7 @@ data class ChecklistUiState(
     val selectedVehicle: Vehicle? = null,
     val currentUser: String? = null, // email ของ user ที่ login
     val currentShift: ShiftCode? = null, // กะตามช่วงเวลาปัจจุบัน (แสดงให้ user เห็น)
-    val checkResults: Map<String, String> = emptyMap(), // itemId → "pass" | "fail"
+    val checkResults: Map<String, Boolean> = emptyMap(), // "<comp>-<no>" → true=ปกติ, false=ชำรุด
     val remarks: Map<String, String> = emptyMap(), // itemId → ข้อความ (เฉพาะ fail)
     val mainRemark: String = "", // หมายเหตุรวม
     val manhourMeter: String = "", // เลขไมล์
@@ -23,3 +23,5 @@ data class ChecklistUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
+
+

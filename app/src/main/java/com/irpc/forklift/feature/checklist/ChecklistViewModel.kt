@@ -4,9 +4,13 @@ package com.irpc.forklift.feature.checklist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.irpc.forklift.core.data.mock.MockChecklistMaster
 import com.irpc.forklift.core.data.mock.MockData
+import com.irpc.forklift.core.domain.model.ChecksheetStatus
 import com.irpc.forklift.core.domain.model.DailyChecksheet
 import com.irpc.forklift.core.domain.model.Vehicle
+import com.irpc.forklift.core.domain.model.activePointKeys
+import com.irpc.forklift.core.domain.model.recalcDefects
 import com.irpc.forklift.core.data.repository.*
 import com.irpc.forklift.core.domain.repository.*
 import com.irpc.forklift.core.domain.usecase.checklist.GetPreviousChecksheetUseCase
@@ -113,8 +117,8 @@ class ChecklistViewModel
                                     isLoading = false,
                                 )
                         } else {
-                            // ไม่มีกะก่อน → default PASS all
-                            val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
+                            // ไม่มีกะก่อน → default PASS all (true) จาก master ใหม่
+                            val defaultResults = defaultPassResults()
                             _uiState.value =
                                 _uiState.value.copy(
                                     previousChecksheet = null,
@@ -124,7 +128,7 @@ class ChecklistViewModel
                                 )
                         }
                     }.onFailure { e ->
-                        val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
+                        val defaultResults = defaultPassResults()
                         _uiState.value =
                             _uiState.value.copy(
                                 error = e.message,
@@ -137,7 +141,7 @@ class ChecklistViewModel
 
         fun checkItem(
             itemId: String,
-            result: String,
+            result: Boolean,
         ) {
             val current = _uiState.value.checkResults.toMutableMap()
             current[itemId] = result
@@ -166,7 +170,7 @@ class ChecklistViewModel
         }
 
         fun passAllItems() {
-            val defaultResults = MockData.checklistItems.associate { it.id to "pass" }
+            val defaultResults = defaultPassResults()
             _uiState.value =
                 _uiState.value.copy(
                     checkResults = defaultResults,
@@ -188,6 +192,8 @@ class ChecklistViewModel
                 val operator = state.currentUser ?: "unknown"
                 // timestamp ISO 8601 +07:00 (ครั้งแรก: updated_at = created_at)
                 val nowIso = DateUtils.getNowIsoString()
+                // recalc denormalized (count/keys/has_defect) จาก boolean results — atomic
+                val defects = recalcDefects(state.checkResults)
 
                 val checksheet =
                     DailyChecksheet(
@@ -201,9 +207,14 @@ class ChecklistViewModel
                         remarks = state.remarks,
                         main_remark = state.mainRemark,
                         manhourMeter = state.manhourMeter,
-                        status = if (state.checkResults.any { it.value == "fail" }) "unsafe" else "normal",
+                        defect_count = defects.defect_count,
+                        defect_keys = defects.defect_keys,
+                        has_defect = defects.has_defect,
+                        status = if (defects.has_defect) ChecksheetStatus.UNSAFE else ChecksheetStatus.NORMAL,
                         created_at = nowIso,
+                        created_by = operator,
                         updated_at = nowIso,
+                        updated_by = operator,
                     )
 
                 val result = submitChecksheet.invoke(checksheet)
@@ -236,4 +247,13 @@ class ChecklistViewModel
                 _uiState.value = ChecklistUiState(vehicles = vehicles)
             }
         }
+
+        /**
+         * ค่า default ของ results (ทุก checking_point ที่ is_active = true/pass)
+         * จาก master ใหม่ (component + no → key "<comp>-<no>")
+         */
+        private fun defaultPassResults(): Map<String, Boolean> =
+            MockChecklistMaster.activeComponents
+                .flatMap { it.activePointKeys() }
+                .associateWith { true }
     }

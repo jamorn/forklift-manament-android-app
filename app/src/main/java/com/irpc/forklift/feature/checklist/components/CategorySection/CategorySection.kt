@@ -1,4 +1,4 @@
-// 📁 feature/checklist/components/CategorySection/CategorySection.kt
+// components/CategorySection/CategorySection.kt
 package com.irpc.forklift.feature.checklist.components.CategorySection
 
 import androidx.compose.foundation.layout.Column
@@ -14,28 +14,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.irpc.forklift.core.data.mock.MockData.ChecklistItem
+import com.irpc.forklift.core.domain.model.ChecklistComponent
+import com.irpc.forklift.core.domain.model.CheckingPoint
+import com.irpc.forklift.core.domain.model.pointKey
 import com.irpc.forklift.feature.checklist.components.CheckItemRow.CheckItemRow
 
 /**
- * 📂 Category Section — หมวดหมู่ในการตรวจเช็ค
+ * 📂 Component Section — หมวด (component) ตาม redesign
  *
- * แสดงเป็น **Card 1 แผ่นต่อหมวด** แยกชัด:
- * - Header (พื้นสีเด่น): ชื่อหมวดข้อมูลอย่างเดียว (ไม่มี badge)
- * - Child: CheckItemRow แต่ละรายการ คั่นด้วย Divider + มีหมายเลขลำดับ (index+1)
+ * แสดงเป็น **Card 1 แผ่นต่อ component** แยกชัด:
+ * - Header (พื้นสีเด่น): ชื่อหมวด (component_th) — ไม่มี badge
+ * - Child: CheckItemRow แต่ละ checking_point (คั่น Divider + แสดงเลขลำดับ 1..N)
  *
- * @param title ชื่อหมวดหมู่
- * @param items รายการตรวจในหมวดนี้
- * @param results ผลตรวจ (itemId → "pass"/"fail")
- * @param remarks หมายเหตุ (itemId → remark)
+ * ⭐ เลขลำดับที่แสดง = **idx+1 (1..N ภายในหมวด)** — user เห็นเลขเรียง 1,2,3..
+ *   **ไม่ใช้ `point.no`** (Step 10) เพราะเลข 10,20,30 นับยาก/งง user
+ *   แต่ `no` ยังเป็น key ของผลตรวจ (`pointKey = "<comp>-<no>"`) — เก็บเป็น identity ใน background
+ *
+ * @param component หมวดตรวจ (component 1-5)
+ * @param points รายการตรวจในหมวดนี้ (checking_points ที่ is_active)
+ * @param results ผลตรวจ (key "<comp>-<no>" → true/false)
+ * @param remarks หมายเหตุ (key → remark)
  */
 @Composable
 fun CategorySection(
-    title: String,
-    items: List<ChecklistItem>,
-    results: Map<String, String>,
+    component: ChecklistComponent,
+    points: List<CheckingPoint>,
+    results: Map<String, Boolean>,
     remarks: Map<String, String>,
-    onItemChecked: (String, String) -> Unit,
+    onItemChecked: (String, Boolean) -> Unit,
     onItemRemark: (String, String) -> Unit,
 ) {
     Card(
@@ -54,7 +60,7 @@ fun CategorySection(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = title,
+                    text = component.component_th,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -62,18 +68,21 @@ fun CategorySection(
                 )
             }
 
-            // ============ Child Items (มีหมายเลขลำดับ index+1) ============
-            items.forEachIndexed { idx, item ->
+            // ============ Child Items (key = "<comp>-<no>") ============
+            points.forEachIndexed { idx, point ->
+                val key = component.pointKey(point)
+                // ส่ง index = idx+1 (1..N) ให้ CheckItemRow แสดงเลขเรียง user-friendly
+                // (ไม่ใช้ point.no ซึ่งเป็น Step 10 — ดู comment ใน CheckItemRow)
                 CheckItemRow(
                     index = idx + 1,
-                    item = item,
-                    result = results[item.id],
-                    remark = remarks[item.id] ?: "",
-                    onChecked = { result -> onItemChecked(item.id, result) },
-                    onRemark = { remark -> onItemRemark(item.id, remark) },
+                    point = point,
+                    result = results[key],
+                    remark = remarks[key] ?: "",
+                    onChecked = { result -> onItemChecked(key, result) },
+                    onRemark = { remark -> onItemRemark(key, remark) },
                 )
                 // เส้นแบ่งระหว่างรายการ (ยกเว้นรายการสุดท้าย)
-                if (idx != items.lastIndex) {
+                if (idx != points.lastIndex) {
                     Divider(
                         modifier = Modifier.padding(start = 16.dp),
                         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
@@ -83,3 +92,4 @@ fun CategorySection(
         }
     }
 }
+
